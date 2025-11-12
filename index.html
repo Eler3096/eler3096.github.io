@@ -5,13 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AppsMart Technology</title>
   <meta name="description" content="AppsMart Technology - Desarrollador de aplicaciones Android como Biblia Universal. Descarga nuestras apps desde Google Play y Uptodown.">
-  <meta name="keywords" content="Eler, Biblia Universal, aplicaciones Android, Uptodown, Google Play">
+  <meta name="keywords" content="AppsMart Technology, Biblia Universal, aplicaciones Android, Uptodown, Google Play">
   <meta name="robots" content="index, follow">
   <style>
     body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #fafafa; color: #222; }
-    header { background: #1a1a1a; color: white; text-align: center; padding: 50px 20px; }
-    header h1 { margin: 0; font-size: 2.2em; }
-    header p { font-size: 1.1em; opacity: 0.8; }
+    header { 
+      background: #1a1a1a; 
+      color: white; 
+      text-align: center; 
+      padding: 50px 20px; 
+    }
+    header .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+    header img.logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+    }
+    header h1 { 
+      margin: 0; 
+      font-size: 2.2em; 
+    }
+    header p { 
+      font-size: 1.1em; 
+      opacity: 0.8; 
+    }
     .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
     .app-card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
     .app-card h2 { margin-top: 0; }
@@ -26,25 +48,27 @@
 <body>
 
   <header>
-    <h1>AppsMart Technology</h1>
-    <p>IA, Inovación & Diseño Digital.</p>
+    <div class="logo-container">
+      <!-- 🔹 Cambia la URL de la imagen por el enlace de tu logo -->
+      <img src="https://raw.githubusercontent.com/Eler3096/Eler.github.io/main/logo.png" alt="Logo AppsMart" class="logo">
+      <h1>AppsMart Technology</h1>
+    </div>
+    <p>IA, Innovación & Diseño Digital.</p>
   </header>
 
   <div class="container">
-
     <div class="app-card">
       <h2>Biblia Universal</h2>
       <p>Lee, escucha y comparte la Palabra de Dios con una interfaz limpia, moderna y sin distracciones.</p>
       <a href="https://play.google.com/store/apps/details?id=com.tuapp" class="btn google">Google Play</a>
       <a href="https://biblia-universal.uptodown.com/android" class="btn uptodown">Uptodown</a>
     </div>
-
   </div>
 
   <footer>
     <a href="politica.html">Política de privacidad</a> |
     <a href="mailto:appsmarttechnology@gmail.com">Contacto</a> |
-    © 2025 Eler Apps
+    © 2025 AppsMart Technology
   </footer>
 
 </body>
