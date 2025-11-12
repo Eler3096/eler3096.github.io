@@ -75,7 +75,6 @@
     }
     .app-header img.app-icon { width: 80px; height: 80px; border-radius: 12px; flex-shrink: 0; }
     .app-header h2 { margin: 0; }
-
     .app-description { margin: 10px 0; }
 
     /* ===== SCREENS ===== */
@@ -129,6 +128,39 @@
     footer a { color: #2196f3; text-decoration: none; }
     footer a:hover { text-decoration: underline; }
 
+    /* ===== MODAL ===== */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .modal img {
+      max-width: 90%;
+      max-height: 80%;
+      transition: transform 0.3s ease;
+    }
+    .modal-buttons {
+      margin-top: 20px;
+    }
+    .zoom-btn {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      margin: 0 10px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .zoom-btn:hover {
+      background: rgba(255,255,255,0.4);
+    }
   </style>
 </head>
 <body>
@@ -170,7 +202,6 @@
             <img src="https://github.com/Eler3096/Eler.github.io/blob/main/Screenshot_3_Universal%20Bible.jpg?raw=true" alt="Captura 3">
             <img src="https://github.com/Eler3096/Eler.github.io/blob/main/Screenshot_4_Universal%20Bible.jpg?raw=true" alt="Captura 4">
             <img src="https://github.com/Eler3096/Eler.github.io/blob/main/Screenshot_5_Universal%20Bible.jpg?raw=true" alt="Captura 5">
-            <img src="https://github.com/Eler3096/Eler.github.io/blob/main/Screenshot_6_Universal%20Bible.jpg?raw=true" alt="Captura 5">
           </div>
         </div>
         <button class="arrow arrow-right">&#10095;</button>
@@ -180,32 +211,6 @@
       <a href="https://biblia-universal.uptodown.com/android" class="btn uptodown">Uptodown</a>
     </div>
 
-    <!-- Repite para otras apps -->
-    <div class="app-card" data-category="musica">
-      <div class="app-header">
-        <img src="ruta-icono-musicflow.png" alt="MusicFlow" class="app-icon">
-        <h2>MusicFlow</h2>
-      </div>
-      <p class="app-description">Escucha tu música favorita sin conexión con una interfaz moderna y fluida.</p>
-
-      <div class="screenshots-wrapper">
-        <button class="arrow arrow-left">&#10094;</button>
-        <div class="screenshots-container">
-          <div class="screenshots">
-            <img src="ruta-captura1.png" alt="Captura 1">
-            <img src="ruta-captura2.png" alt="Captura 2">
-            <img src="ruta-captura3.png" alt="Captura 3">
-            <img src="ruta-captura4.png" alt="Captura 4">
-            <img src="ruta-captura5.png" alt="Captura 5">
-          </div>
-        </div>
-        <button class="arrow arrow-right">&#10095;</button>
-      </div>
-
-      <a href="#" class="btn google">Google Play</a>
-      <a href="#" class="btn uptodown">Uptodown</a>
-    </div>
-
   </div>
 
   <footer>
@@ -213,6 +218,15 @@
     <a href="mailto:appsmarttechnology@gmail.com">Contacto</a> |
     © 2025 AppsMart Technology
   </footer>
+
+  <!-- Modal -->
+  <div id="imageModal" class="modal">
+    <img id="modalImage" src="" alt="Zoom Imagen">
+    <div class="modal-buttons">
+      <button class="zoom-btn" id="zoomIn">+</button>
+      <button class="zoom-btn" id="zoomOut">−</button>
+    </div>
+  </div>
 
   <script>
     // Filtrado de apps
@@ -235,6 +249,38 @@
       const container = wrapper.querySelector('.screenshots-container');
       wrapper.querySelector('.arrow-left').addEventListener('click', () => { container.scrollBy({ left: -160, behavior: 'smooth' }); });
       wrapper.querySelector('.arrow-right').addEventListener('click', () => { container.scrollBy({ left: 160, behavior: 'smooth' }); });
+    });
+
+    // Modal Zoom
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    let scale = 1;
+
+    document.querySelectorAll('.screenshots img').forEach(img => {
+      img.addEventListener('click', () => {
+        modal.style.display = 'flex';
+        modalImg.src = img.src;
+        scale = 1;
+        modalImg.style.transform = `scale(${scale})`;
+      });
+    });
+
+    document.getElementById('zoomIn').addEventListener('click', () => {
+      scale += 0.2;
+      modalImg.style.transform = `scale(${scale})`;
+    });
+
+    document.getElementById('zoomOut').addEventListener('click', () => {
+      scale = Math.max(0.5, scale - 0.2);
+      modalImg.style.transform = `scale(${scale})`;
+    });
+
+    modal.addEventListener('click', e => {
+      if (e.target === modal) modal.style.display = 'none';
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') modal.style.display = 'none';
     });
   </script>
 
