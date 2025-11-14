@@ -6,6 +6,7 @@ auth.onAuthStateChanged(user=>{
 function logout(){ auth.signOut(); }
 
 // SUBIR APP
+// SUBIR APP
 function subirApp(ev){
   const nombre = document.getElementById("nombre").value.trim();
   const categoria = document.getElementById("categoria").value.trim();
@@ -13,6 +14,7 @@ function subirApp(ev){
   const version = document.getElementById("version").value.trim();
   const idioma = document.getElementById("idioma").value.trim();
   const tipo = document.getElementById("tipo").value.trim();
+  const internet = document.getElementById("internet").value; // nuevo
 
   const apkFile = document.getElementById("apk").files[0];
   const imgFile = document.getElementById("imagen").files[0];
@@ -29,6 +31,9 @@ function subirApp(ev){
     alert("Debes subir imagen y APK");
     return;
   }
+
+  // tamaño en MB
+  const sizeMB = (apkFile.size / (1024 * 1024)).toFixed(1) + " MB";
 
   btn.disabled = true;
   estado.textContent = "Subiendo archivos...";
@@ -65,10 +70,14 @@ function subirApp(ev){
       version,
       idioma,
       tipo,
+      internet,                 // nuevo
+      size: sizeMB,             // nuevo
       imagen: imgURL,
       apk: apkURL,
       likes: 0,
       descargas: 0,
+      ratingAvg: 0,             // para estrellas
+      ratingCount: 0,
       fecha: Date.now()
     });
   })
@@ -81,3 +90,4 @@ function subirApp(ev){
     btn.disabled = false;
   });
 }
+
