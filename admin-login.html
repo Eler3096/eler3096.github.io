@@ -1,10 +1,64 @@
-<!-- SDK Firebase v8 -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Acceso Admin</title>
+
+<style>
+body { 
+  font-family: Arial; 
+  background:#0f172a;
+  height:100vh; 
+  display:flex; 
+  justify-content:center; 
+  align-items:center; 
+  color:white;
+  margin:0;
+}
+.box{
+  background:#1e293b;
+  padding:30px;
+  border-radius:12px;
+  width:320px;
+  text-align:center;
+}
+input{
+  width:100%;
+  margin:8px 0;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+}
+button{
+  padding:10px 16px;
+  width:100%;
+  background:#3b82f6;
+  color:white;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+p{color:red;}
+</style>
+
+</head>
+<body>
+
+<div class="box">
+  <h2>Panel Admin</h2>
+  <input type="email" id="email" placeholder="Correo">
+  <input type="password" id="password" placeholder="Contraseña">
+  <button onclick="login()">Entrar</button>
+  <p id="msg"></p>
+</div>
+
+<!-- SDK Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
-<!-- Tu archivo firebase.js (solo JS, sin <script>) -->
+<!-- Tu configuración -->
 <script src="firebase.js"></script>
 
 <script>
@@ -21,3 +75,6 @@ function login(){
     });
 }
 </script>
+
+</body>
+</html>
