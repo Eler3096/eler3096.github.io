@@ -1,107 +1,68 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>AppsMart Technology</title>
 <style>
-body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #fafafa; color: #222; }
+  body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #fafafa; color: #222; }
+  header { background: #1a1a1a; color: white; text-align: center; padding: 40px 20px 20px; }
+  header .logo-container { display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; }
+  header img.logo { width: 120px; height: 120px; border-radius: 12px; }
+  header .title-group { display: flex; flex-direction: column; align-items: center; }
+  header h1 { margin: 0; font-size: 2.2em; }
+  header p { font-size: 1.0em; margin: 5px 0 0 0; opacity: 0.85; text-align: center; }
 
-header { background: #1a1a1a; color: white; text-align: center; padding: 40px 20px 20px; }
-header .logo-container { display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; }
-header img.logo { width: 120px; height: 120px; border-radius: 12px; }
-header .title-group { display: flex; flex-direction: column; align-items: center; }
-header h1 { margin: 0; font-size: 2.5em; }
-header p { font-size: 1.1em; margin: 5px 0 0 0; opacity: 0.8; text-align: center; }
+  nav { background: #2a2a2a; display: flex; justify-content: center; flex-wrap: wrap; padding: 10px 0; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+  nav a { color: white; text-decoration: none; margin: 8px 12px; padding: 10px 18px; border-radius: 6px; font-weight: 600; transition: 0.3s; }
+  nav a:hover { background: #2196f3; }
+  nav a.active { background: #34a853; }
 
-nav { background: #2a2a2a; display: flex; justify-content: center; flex-wrap: wrap; padding: 10px 0; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
-nav a { color: white; text-decoration: none; margin: 8px 12px; padding: 10px 18px; border-radius: 6px; font-weight: 600; transition: 0.3s; }
-nav a:hover { background: #2196f3; }
-nav a.active { background: #34a853; }
+  .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; display: flex; flex-direction: column; align-items: center; }
+  .app-card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); width: 100%; transition: 0.3s; }
+  .app-header { display: flex; align-items: center; gap: 15px; }
+  .app-header img.app-icon { width: 80px; height: 80px; border-radius: 12px; flex-shrink: 0; object-fit: cover; }
+  .app-header h2 { margin: 0; font-size: 1.4em; }
 
-.container { max-width: 1000px; margin: 40px auto; padding: 0 20px; display: flex; flex-direction: column; align-items: center; }
-.app-card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); width: 100%; transition: 0.3s; }
-.app-header { display: flex; align-items: center; gap: 15px; }
-.app-header img.app-icon { width: 80px; height: 80px; border-radius: 12px; flex-shrink: 0; }
-.app-header h2 { margin: 0; }
-.app-description { margin: 10px 0; }
+  .app-description { margin: 10px 0; color: #444; }
+  .screenshots-wrapper { position: relative; width: 100%; margin: 10px 0; }
+  .screenshots-container { overflow-x: auto; scroll-behavior: smooth; padding: 10px 0; }
+  .screenshots { display: flex; gap: 10px; }
+  .screenshots img { width: 150px; height: 300px; border-radius: 8px; object-fit: cover; flex-shrink: 0; transition: transform 0.3s; cursor: pointer; }
+  .screenshots img:hover { transform: scale(1.05); }
 
-.screenshots-wrapper { position: relative; width: 100%; margin: 10px 0; }
-.screenshots-container { overflow-x: auto; scroll-behavior: smooth; padding: 10px 0; }
-.screenshots { display: flex; gap: 10px; }
-.screenshots img { width: 150px; height: 300px; border-radius: 8px; object-fit: cover; flex-shrink: 0; transition: transform 0.3s; cursor: pointer; }
-.screenshots img:hover { transform: scale(1.05); }
+  .arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 18px; z-index: 10; }
+  .arrow-left { left: 0; }
+  .arrow-right { right: 0; }
 
-.arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 18px; z-index: 10; }
-.arrow-left { left: 0; }
-.arrow-right { right: 0; }
+  .btn { display: inline-block; padding: 10px 20px; margin: 10px 5px 0; border-radius: 6px; color: white; text-decoration: none; font-weight: 600; background: #666; cursor: pointer; border: none; }
+  .google { background: #34a853; }
+  .descargar { background: #2196f3; }
 
-.btn { display: inline-block; padding: 10px 20px; margin: 10px 5px 0; border-radius: 6px; color: white; text-decoration: none; font-weight: 600; }
-.google { background: #34a853; }
-.descargar { background: #2196f3; }
+  .app-info { background: #f4f4f4; padding: 15px 20px; border-radius: 10px; margin-top: 15px; font-size: 0.95em; width: 100%; box-shadow: inset 0 0 4px rgba(0,0,0,0.05); }
+  .app-info h3 { margin-top: 0; margin-bottom: 10px; font-size: 1.1em; color: #222; }
 
-footer { text-align: center; padding: 40px 20px; font-size: 0.9em; color: #555; }
-footer a { color: #2196f3; text-decoration: none; }
-footer a:hover { text-decoration: underline; }
+  /* Firebase stats (diseño A - inline) */
+  .firebase-stats { margin-top: 10px; font-size: 1.05em; display: flex; gap: 14px; font-weight: 600; color: #333; align-items: center; flex-wrap: wrap; }
+  .firebase-stats span { background: #eeeeee; padding: 6px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; }
+  .rating-stars { display: inline-flex; gap: 4px; cursor: pointer; }
+  .rating-stars .star { font-size: 18px; color: #ccc; }
+  .rating-stars .star.filled { color: #f5b301; }
 
-/* INFO BOX */
-.app-info {
-  background: #f4f4f4;
-  padding: 15px 20px;
-  border-radius: 10px;
-  margin-top: 15px;
-  font-size: 0.95em;
-  width: 100%;
-  box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
-}
-.app-info h3 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  font-size: 1.2em;
-  color: #222;
-}
-.app-info ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.app-info li {
-  margin: 6px 0;
-}
+  .comments { margin-top: 10px; }
+  .comment { background: #f0f0f0; padding: 8px; border-radius: 6px; margin-bottom: 8px; }
+  .stat-panel { background: white; padding: 12px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 18px; width: 100%; }
 
-/* MODAL */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 999;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.9);
-  overflow-y: auto;
-}
-.modal img {
-  display: block;
-  margin: 20px auto;
-  max-width: 90%;
-  transition: transform 0.3s ease;
-}
-.modal-buttons {
-  position: fixed;
-  top: 20px; left: 50%;
-  transform: translateX(-50%);
-  display: flex; gap: 20px;
-  z-index: 1000;
-}
-.zoom-btn {
-  background: rgba(255,255,255,0.2);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 20px;
-  cursor: pointer;
-}
-.zoom-btn:hover { background: rgba(255,255,255,0.4); }
+  footer { text-align: center; padding: 30px 20px; font-size: 0.9em; color: #555; }
+  footer a { color: #2196f3; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* Modal */
+  .modal { display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); overflow-y: auto; }
+  .modal img { display: block; margin: 20px auto; max-width: 90%; transition: transform 0.3s ease; }
+  .modal-buttons { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 12px; z-index: 10000; }
+  .zoom-btn { background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 8px; padding: 10px 16px; font-size: 18px; cursor: pointer; }
+  @media (max-width:600px){ .screenshots img { width:120px; height:240px; } .app-header img.app-icon{ width:64px;height:64px } }
 </style>
 </head>
 <body>
@@ -127,10 +88,8 @@ footer a:hover { text-decoration: underline; }
 
 <div class="container">
 
-<!-- ===========================================================
-       APP 1 — BIBLIA UNIVERSAL
-=========================================================== -->
-<div class="app-card" data-category="educacion">
+<!-- ============ APP 1 - Biblia Universal ============ -->
+<div class="app-card" data-category="educacion" data-appid="biblia_universal">
   <div class="app-header">
     <img src="https://github.com/Eler3096/Eler.github.io/blob/main/logo_biblia_universal.png?raw=true" alt="Biblia Universal" class="app-icon">
     <h2>Biblia Universal [Es] con Audio</h2>
@@ -141,107 +100,217 @@ footer a:hover { text-decoration: underline; }
     <button class="arrow arrow-left">&#10094;</button>
     <div class="screenshots-container">
       <div class="screenshots">
-        <img src="https://github.com/Eler3096/Eler.github.io/blob/main/Screenshot_1_Universal%20Bible.jpg?raw=true">
-        <img src="https://github.com/Eler3096/Eler.github.io/blob/main/Screenshot_2_Universal%20Bible.jpg?raw=true">
-        <img src="https://github.com/Eler3096/Eler.github.io/blob/main/Screenshot_3_Universal%20Bible.jpg?raw=true">
-        <img src="https://github.com/Eler3096/Eler.github.io/blob/main/Screenshot_4_Universal%20Bible.jpg?raw=true">
-        <img src="https://github.com/Eler3096/Eler.github.io/blob/main/Screenshot_5_Universal%20Bible.jpg?raw=true">
-        <img src="https://github.com/Eler3096/Eler.github.io/blob/main/Screenshot_6_Universal%20Bible.jpg?raw=true">
+        <img src="https://github.com/Eler3096/Eler.github.io/blob/main/Screenshot_1_Universal%20Bible.jpg?raw=true" alt="s1">
+        <img src="https://github.com/Eler3096/Eler.github.io/blob/main/Screenshot_2_Universal%20Bible.jpg?raw=true" alt="s2">
+        <img src="https://github.com/Eler3096/Eler.github.io/blob/main/Screenshot_3_Universal%20Bible.jpg?raw=true" alt="s3">
+        <img src="https://github.com/Eler3096/Eler.github.io/blob/main/Screenshot_4_Universal%20Bible.jpg?raw=true" alt="s4">
+        <img src="https://github.com/Eler3096/Eler.github.io/blob/main/Screenshot_5_Universal%20Bible.jpg?raw=true" alt="s5">
+        <img src="https://github.com/Eler3096/Eler.github.io/blob/main/Screenshot_6_Universal%20Bible.jpg?raw=true" alt="s6">
       </div>
     </div>
     <button class="arrow arrow-right">&#10095;</button>
   </div>
 
-  <a href="#" class="btn google">Google Play</a>
-  <a href="#" class="btn descargar">Descargar</a>
-</div>
-
-
-<!-- ===========================================================
-       APP 2 — GLOBAL CITY (COMPLETA)
-=========================================================== -->
-<div class="app-card" data-category="juegos">
-  <div class="app-header">
-    <img src="https://play-lh.googleusercontent.com/4eAyxWx_wA-uvQVw1Gc7YCOUMIqFZ3VAb9YSEuxsjjXNMTvEihQ6UkNzxaz2YsmiSg=s180" 
-         alt="Global City" class="app-icon">
-    <h2>Global City</h2>
+  <!-- FIREBASE STATS - INSERTED HERE (OPCION A) -->
+  <div class="firebase-stats" data-app="biblia_universal">
+    <span class="likes">❤️ 0</span>
+    <span class="rating">⭐ 0 (0 votos)</span>
+    <span class="downloads">⬇️ 0</span>
+    <span class="views">👁 0</span>
   </div>
 
-  <p class="app-description">
-    Construye la ciudad del futuro: administra recursos, expande tu territorio y completa misiones mientras desarrollas una metrópoli moderna.
-  </p>
+  <a href="#" class="btn google">Google Play</a>
+  <button class="btn descargar">Descargar</button>
+
+  <div class="comments" style="margin-top:12px;">
+    <div id="comments-biblia_universal"></div>
+    <input id="name-biblia_universal" placeholder="Tu nombre (opcional)" style="width:60%;padding:8px;margin-top:8px;">
+    <input id="text-biblia_universal" placeholder="Tu comentario" style="width:60%;padding:8px;margin-top:6px;">
+    <button class="btn" style="display:inline-block;margin-left:8px;" onclick="postComment('biblia_universal')">Enviar</button>
+  </div>
+</div>
+
+<!-- ============ APP 2 - Global City ============ -->
+<div class="app-card" data-category="juegos" data-appid="global_city">
+  <div class="app-header">
+    <img src="https://play-lh.googleusercontent.com/4eAyxWx_wA-uvQVw1Gc7YCOUMIqFZ3VAb9YSEuxsjjXNMTvEihQ6UkNzxaz2YsmiSg=s180" alt="Global City" class="app-icon">
+    <h2>Global City</h2>
+  </div>
+  <p class="app-description">Construye la ciudad del futuro: administra recursos, expande tu territorio y completa misiones.</p>
 
   <div class="screenshots-wrapper">
     <button class="arrow arrow-left">&#10094;</button>
     <div class="screenshots-container">
       <div class="screenshots">
-        <img src="https://play-lh.googleusercontent.com/7YBHQsbO_BQwSx3H2m4ZqkYv6xB5h5Vf--iF7kKIhx7W8e6vTavsQJvPBjsmEe8nhg=w2560-h1440">
-        <img src="https://play-lh.googleusercontent.com/9I2GxUQH3P8KyfyeTzVxO_3Vqiv8lJdF8o5Wq7mIGWSAaObxGc5iDhv1Jp1YVgkTuw=w2560-h1440">
-        <img src="https://play-lh.googleusercontent.com/yN0vyoFJfe2gHqgu6tVf6HmdYFUXPqk1l1TDrA-9vn6p_nEnpCI4W-A-1p5p8MhUIg=w2560-h1440">
+        <img src="https://play-lh.googleusercontent.com/7YBHQsbO_BQwSx3H2m4ZqkYv6xB5h5Vf--iF7kKIhx7W8e6vTavsQJvPBjsmEe8nhg=w2560-h1440" alt="g1">
+        <img src="https://play-lh.googleusercontent.com/9I2GxUQH3P8KyfyeTzVxO_3Vqiv8lJdF8o5Wq7mIGWSAaObxGc5iDhv1Jp1YVgkTuw=w2560-h1440" alt="g2">
+        <img src="https://play-lh.googleusercontent.com/yN0vyoFJfe2gHqgu6tVf6HmdYFUXPqk1l1TDrA-9vn6p_nEnpCI4W-A-1p5p8MhUIg=w2560-h1440" alt="g3">
       </div>
     </div>
     <button class="arrow arrow-right">&#10095;</button>
   </div>
 
-  <!-- INFO COMPLETA DE LA APP -->
-  <div class="app-info">
-    <h3>Información de la App</h3>
-    <ul>
-      <li><strong>Nombre:</strong> Global City</li>
-      <li><strong>Versión:</strong> 0.7.8666</li>
-      <li><strong>Paquete:</strong> com.rbx.city.android</li>
-      <li><strong>Licencia:</strong> Gratis</li>
-      <li><strong>Sistema operativo:</strong> Android</li>
-      <li><strong>Categoría:</strong> Estrategia</li>
-      <li><strong>Idioma:</strong> Español</li>
-      <li><strong>Autor:</strong> UPWAKE.ME</li>
-      <li><strong>Descargas:</strong> 35,146</li>
-      <li><strong>Fecha:</strong> 13 nov. 2025</li>
-      <li><strong>Clasificación:</strong> +3</li>
-      <li><strong>Publicidad:</strong> No especificado</li>
-    </ul>
+  <div class="firebase-stats" data-app="global_city">
+    <span class="likes">❤️ 0</span>
+    <span class="rating">⭐ 0 (0 votos)</span>
+    <span class="downloads">⬇️ 0</span>
+    <span class="views">👁 0</span>
   </div>
 
   <a href="#" class="btn google">Google Play</a>
-  <a href="#" class="btn descargar">Descargar</a>
+  <button class="btn descargar">Descargar</button>
+
+  <div class="comments" style="margin-top:12px;">
+    <div id="comments-global_city"></div>
+    <input id="name-global_city" placeholder="Tu nombre (opcional)" style="width:60%;padding:8px;margin-top:8px;">
+    <input id="text-global_city" placeholder="Tu comentario" style="width:60%;padding:8px;margin-top:6px;">
+    <button class="btn" style="display:inline-block;margin-left:8px;" onclick="postComment('global_city')">Enviar</button>
+  </div>
 </div>
 
-
-<!-- APPs restantes (las tuyas) -->
-
-<div class="app-card" data-category="musica">
+<!-- ============ APP 3 - MusicFlow ============ -->
+<div class="app-card" data-category="musica" data-appid="musicflow">
   <div class="app-header">
     <img src="ruta-icono-musicflow.png" alt="MusicFlow" class="app-icon">
     <h2>MusicFlow</h2>
   </div>
   <p class="app-description">Escucha tu música favorita sin conexión con una interfaz moderna y fluida.</p>
+
+  <div class="screenshots-wrapper">
+    <div class="screenshots-container">
+      <div class="screenshots">
+        <img src="ruta-icono-musicflow.png" alt="m1">
+      </div>
+    </div>
+  </div>
+
+  <div class="firebase-stats" data-app="musicflow">
+    <span class="likes">❤️ 0</span>
+    <span class="rating">⭐ 0 (0 votos)</span>
+    <span class="downloads">⬇️ 0</span>
+    <span class="views">👁 0</span>
+  </div>
+
+  <a href="#" class="btn google">Google Play</a>
+  <button class="btn descargar">Descargar</button>
+
+  <div class="comments" style="margin-top:12px;">
+    <div id="comments-musicflow"></div>
+    <input id="name-musicflow" placeholder="Tu nombre (opcional)" style="width:60%;padding:8px;margin-top:8px;">
+    <input id="text-musicflow" placeholder="Tu comentario" style="width:60%;padding:8px;margin-top:6px;">
+    <button class="btn" style="display:inline-block;margin-left:8px;" onclick="postComment('musicflow')">Enviar</button>
+  </div>
 </div>
 
-<div class="app-card" data-category="productividad">
+<!-- ============ APP 4 - TaskMaster ============ -->
+<div class="app-card" data-category="productividad" data-appid="taskmaster">
   <div class="app-header">
     <img src="ruta-icono-taskmaster.png" alt="TaskMaster" class="app-icon">
     <h2>TaskMaster</h2>
   </div>
   <p class="app-description">Administra tus tareas diarias fácilmente con notificaciones inteligentes y diseño elegante.</p>
+
+  <div class="screenshots-wrapper">
+    <div class="screenshots-container">
+      <div class="screenshots">
+        <img src="ruta-icono-taskmaster.png" alt="t1">
+      </div>
+    </div>
+  </div>
+
+  <div class="firebase-stats" data-app="taskmaster">
+    <span class="likes">❤️ 0</span>
+    <span class="rating">⭐ 0 (0 votos)</span>
+    <span class="downloads">⬇️ 0</span>
+    <span class="views">👁 0</span>
+  </div>
+
+  <a href="#" class="btn google">Google Play</a>
+  <button class="btn descargar">Descargar</button>
+
+  <div class="comments" style="margin-top:12px;">
+    <div id="comments-taskmaster"></div>
+    <input id="name-taskmaster" placeholder="Tu nombre (opcional)" style="width:60%;padding:8px;margin-top:8px;">
+    <input id="text-taskmaster" placeholder="Tu comentario" style="width:60%;padding:8px;margin-top:6px;">
+    <button class="btn" style="display:inline-block;margin-left:8px;" onclick="postComment('taskmaster')">Enviar</button>
+  </div>
 </div>
 
-<div class="app-card" data-category="herramientas">
+<!-- ============ APP 5 - Smart Cleaner ============ -->
+<div class="app-card" data-category="herramientas" data-appid="smart_cleaner">
   <div class="app-header">
     <img src="ruta-icono-smartcleaner.png" alt="Smart Cleaner" class="app-icon">
     <h2>Smart Cleaner</h2>
   </div>
   <p class="app-description">Optimiza tu teléfono con limpieza rápida y mejora el rendimiento con un solo toque.</p>
+
+  <div class="screenshots-wrapper">
+    <div class="screenshots-container">
+      <div class="screenshots">
+        <img src="ruta-icono-smartcleaner.png" alt="s1">
+      </div>
+    </div>
+  </div>
+
+  <div class="firebase-stats" data-app="smart_cleaner">
+    <span class="likes">❤️ 0</span>
+    <span class="rating">⭐ 0 (0 votos)</span>
+    <span class="downloads">⬇️ 0</span>
+    <span class="views">👁 0</span>
+  </div>
+
+  <a href="#" class="btn google">Google Play</a>
+  <button class="btn descargar">Descargar</button>
+
+  <div class="comments" style="margin-top:12px;">
+    <div id="comments-smart_cleaner"></div>
+    <input id="name-smart_cleaner" placeholder="Tu nombre (opcional)" style="width:60%;padding:8px;margin-top:8px;">
+    <input id="text-smart_cleaner" placeholder="Tu comentario" style="width:60%;padding:8px;margin-top:6px;">
+    <button class="btn" style="display:inline-block;margin-left:8px;" onclick="postComment('smart_cleaner')">Enviar</button>
+  </div>
 </div>
 
-<div class="app-card" data-category="estilo">
+<!-- ============ APP 6 - FitLife ============ -->
+<div class="app-card" data-category="estilo" data-appid="fitlife">
   <div class="app-header">
     <img src="ruta-icono-fitness.png" alt="FitLife" class="app-icon">
     <h2>FitLife</h2>
   </div>
   <p class="app-description">Sigue tu entrenamiento diario y controla tu progreso físico con estadísticas detalladas.</p>
+
+  <div class="screenshots-wrapper">
+    <div class="screenshots-container">
+      <div class="screenshots">
+        <img src="ruta-icono-fitness.png" alt="f1">
+      </div>
+    </div>
+  </div>
+
+  <div class="firebase-stats" data-app="fitlife">
+    <span class="likes">❤️ 0</span>
+    <span class="rating">⭐ 0 (0 votos)</span>
+    <span class="downloads">⬇️ 0</span>
+    <span class="views">👁 0</span>
+  </div>
+
+  <a href="#" class="btn google">Google Play</a>
+  <button class="btn descargar">Descargar</button>
+
+  <div class="comments" style="margin-top:12px;">
+    <div id="comments-fitlife"></div>
+    <input id="name-fitlife" placeholder="Tu nombre (opcional)" style="width:60%;padding:8px;margin-top:8px;">
+    <input id="text-fitlife" placeholder="Tu comentario" style="width:60%;padding:8px;margin-top:6px;">
+    <button class="btn" style="display:inline-block;margin-left:8px;" onclick="postComment('fitlife')">Enviar</button>
+  </div>
 </div>
 
+<!-- ============ STATS PANEL & FEATURED (simple) ============ -->
+<div class="stat-panel">
+  <h3>Estadísticas rápidas</h3>
+  <div id="featured-list">Cargando apps destacadas...</div>
 </div>
+
+</div> <!-- container -->
 
 <footer>
   <a href="https://biblia-universal-reina-valera.web.app/privacy_policy.html">Política de privacidad</a> |
@@ -249,7 +318,7 @@ footer a:hover { text-decoration: underline; }
   © 2025 AppsMart Technology
 </footer>
 
-<!-- Modal -->
+<!-- Modal para zoom -->
 <div id="imageModal" class="modal">
   <div class="modal-buttons">
     <button class="zoom-btn" id="zoomIn">+</button>
@@ -258,58 +327,238 @@ footer a:hover { text-decoration: underline; }
   <img id="modalImage" src="" alt="Zoom Imagen">
 </div>
 
-<script>
-// Filtrado de apps
-const buttons = document.querySelectorAll('nav a');
-const cards = document.querySelectorAll('.app-card');
-buttons.forEach(btn => {
-  btn.addEventListener('click', e => {
-    e.preventDefault();
-    buttons.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const category = btn.getAttribute('data-category');
-    cards.forEach(card => {
-      card.style.display = (category === 'all' || card.getAttribute('data-category') === category) ? 'block' : 'none';
+<!-- ======================= FIREBASE & LÓGICA ======================= -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getDatabase, ref, get, set, update, push, onValue, serverTimestamp } 
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+  // ---------- TU CONFIG ----------
+  const firebaseConfig = {
+    apiKey: "AIzaSyApdnTXHE7O6AoU9ldEV4yzsCVBGdsWuRg",
+    authDomain: "web-appsmart-technology.firebaseapp.com",
+    projectId: "web-appsmart-technology",
+    storageBucket: "web-appsmart-technology.appspot.com",
+    messagingSenderId: "595885713972",
+    appId: "1:595885713972:web:9ab9dd4072db0101207861",
+    databaseURL: "https://web-appsmart-technology-default-rtdb.firebaseio.com/"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // Lista de app IDs (tus IDs)
+  const APP_IDS = ["biblia_universal","global_city","musicflow","taskmaster","smart_cleaner","fitlife"];
+
+  // Inicializa estructura base si no existe
+  async function ensureAppNode(id){
+    const node = ref(db, `apps/${id}`);
+    const snap = await get(node);
+    if(!snap.exists()){
+      await set(node, {
+        meta: { createdAt: Date.now() },
+        likes: 0,
+        downloads: 0,
+        rating: { total: 0, votes: 0 }, // total = suma estrellas
+        views: 0,
+        comments: {}
+      });
+    }
+  }
+
+  // Inicializar todas (asegura que existan)
+  APP_IDS.forEach(id => ensureAppNode(id));
+
+  // ---------------- Helpers ----------------
+  function $qs(selector, el=document){ return el.querySelector(selector); }
+  function $qsa(selector, el=document){ return Array.from(el.querySelectorAll(selector)); }
+
+  // Cargar y enlazar cada .firebase-stats bloque
+  document.querySelectorAll('.firebase-stats').forEach(block => {
+    const appId = block.dataset.app;
+    const appRef = ref(db, `apps/${appId}`);
+
+    // Asegurar nodo
+    ensureAppNode(appId);
+
+    // Enlazar likes
+    onValue(ref(db, `apps/${appId}/likes`), snap => {
+      const v = snap.exists()?snap.val():0;
+      block.querySelector('.likes').textContent = `❤️ ${v}`;
+    });
+
+    // Enlazar downloads
+    onValue(ref(db, `apps/${appId}/downloads`), snap => {
+      const v = snap.exists()?snap.val():0;
+      block.querySelector('.downloads').textContent = `⬇️ ${v}`;
+    });
+
+    // Enlazar views
+    onValue(ref(db, `apps/${appId}/views`), snap => {
+      const v = snap.exists()?snap.val():0;
+      block.querySelector('.views').textContent = `👁 ${v}`;
+    });
+
+    // Enlazar rating
+    onValue(ref(db, `apps/${appId}/rating`), snap => {
+      const data = snap.exists() ? snap.val() : { total:0, votes:0 };
+      const avg = data.votes === 0 ? 0 : (data.total / data.votes);
+      block.querySelector('.rating').textContent = `⭐ ${avg.toFixed(1)} (${data.votes} votos)`;
+    });
+
+    // Incrementar visita al ver el card (una vez por carga)
+    (async ()=>{
+      const vSnap = await get(ref(db, `apps/${appId}/views`));
+      const v = vSnap.exists()?vSnap.val():0;
+      await update(ref(db, `apps/${appId}`), { views: v + 1 });
+    })();
+
+    // Detectar click en descargar - sube contador
+    const card = block.closest('.app-card');
+    const downloadBtn = card.querySelector('.descargar');
+    downloadBtn.addEventListener('click', async ()=>{
+      const dSnap = await get(ref(db, `apps/${appId}/downloads`));
+      const d = dSnap.exists()?dSnap.val():0;
+      await update(ref(db, `apps/${appId}`), { downloads: d + 1 });
+      // Aquí podrías abrir el enlace real:
+      // window.open('ENLACE_DE_TU_APK_O_GOOGLEPLAY', '_blank');
+    });
+
+    // Crear me gusta clickable (por simplicidad es botón separado)
+    block.querySelector('.likes').style.cursor = 'pointer';
+    block.querySelector('.likes').addEventListener('click', async ()=>{
+      const lSnap = await get(ref(db, `apps/${appId}/likes`));
+      const l = lSnap.exists()?lSnap.val():0;
+      await update(ref(db, `apps/${appId}`), { likes: l + 1 });
+    });
+
+    // Agregar estrellas clicables (inline mini UI) - al hacer hover mostrar estrellas
+    // Vamos a crear overlay stars next to rating text
+    const ratingSpan = block.querySelector('.rating');
+    const starContainer = document.createElement('span');
+    starContainer.className = 'rating-stars';
+    for(let i=1;i<=5;i++){
+      const s = document.createElement('span');
+      s.className = 'star';
+      s.textContent = '★';
+      s.dataset.value = i;
+      s.addEventListener('click', async (e)=>{
+        const val = Number(e.currentTarget.dataset.value);
+        // escribir rating: push as user-free entry; we store aggregate in rating
+        const ratingSnap = await get(ref(db, `apps/${appId}/rating`));
+        const ratingData = ratingSnap.exists()?ratingSnap.val():{ total:0, votes:0 };
+        const newTotal = (ratingData.total || 0) + val;
+        const newVotes = (ratingData.votes || 0) + 1;
+        await set(ref(db, `apps/${appId}/rating`), { total: newTotal, votes: newVotes });
+      });
+      starContainer.appendChild(s);
+    }
+    ratingSpan.appendChild(starContainer);
+  });
+
+  // ---------------- Comentarios ----------------
+  window.postComment = async function(appId){
+    const nameInput = document.getElementById(`name-${appId}`);
+    const textInput = document.getElementById(`text-${appId}`);
+    const name = nameInput ? nameInput.value.trim() : '';
+    const text = textInput ? textInput.value.trim() : '';
+    if(!text) return alert('Escribe un comentario antes de enviar.');
+    const commentsRef = ref(db, `apps/${appId}/comments`);
+    // push comment
+    const newKey = push(ref(db, `apps/${appId}/comments`)).key;
+    await set(ref(db, `apps/${appId}/comments/${newKey}`), { name: name || 'Anónimo', text, ts: Date.now() });
+    if(textInput) textInput.value = '';
+  };
+
+  // Cargar comentarios para cada app
+  APP_IDS.forEach(appId=>{
+    const commentsContainer = document.getElementById(`comments-${appId}`);
+    const commentsRef = ref(db, `apps/${appId}/comments`);
+    onValue(commentsRef, snap => {
+      if(!commentsContainer) return;
+      commentsContainer.innerHTML = '';
+      if(!snap.exists()) return;
+      const data = snap.val();
+      const keys = Object.keys(data).sort((a,b)=> data[b].ts - data[a].ts);
+      keys.forEach(k=>{
+        const c = data[k];
+        const div = document.createElement('div');
+        div.className = 'comment';
+        div.innerHTML = `<strong>${c.name}</strong>: ${c.text} <br><small style="opacity:0.7">${new Date(c.ts).toLocaleString()}</small>`;
+        commentsContainer.appendChild(div);
+      });
     });
   });
-});
 
-// Scroll horizontal
-document.querySelectorAll('.screenshots-wrapper').forEach(wrapper => {
-  const container = wrapper.querySelector('.screenshots-container');
-  wrapper.querySelector('.arrow-left').addEventListener('click', () => { container.scrollBy({ left: -160, behavior: 'smooth' }); });
-  wrapper.querySelector('.arrow-right').addEventListener('click', () => { container.scrollBy({ left: 160, behavior: 'smooth' }); });
-});
+  // ---------------- Featured & Stats ----------------
+  // Simple: list top 3 by downloads
+  async function loadFeatured(){
+    const appsSnap = await get(ref(db, `apps`));
+    const container = document.getElementById('featured-list');
+    if(!appsSnap.exists()){ container.textContent = 'No hay datos aún.'; return; }
+    const apps = appsSnap.val();
+    const list = Object.keys(apps).map(id=>{
+      const a = apps[id];
+      return { id, downloads: (a.downloads||0), likes: (a.likes||0), avg: a.rating && a.rating.votes ? (a.rating.total / a.rating.votes) : 0 };
+    });
+    list.sort((x,y)=> y.downloads - x.downloads);
+    container.innerHTML = '<ol>' + list.slice(0,5).map(a=>`<li>${a.id} — ⬇️ ${a.downloads} — ❤️ ${a.likes} — ⭐ ${a.avg.toFixed(1)}</li>`).join('') + '</ol>';
+  }
 
-// Modal Zoom
-const modal = document.getElementById('imageModal');
-const modalImg = document.getElementById('modalImage');
-let scale = 1;
+  // call periodically and on DB changes
+  onValue(ref(db,'apps'), ()=> loadFeatured());
+  loadFeatured();
 
-document.querySelectorAll('.screenshots img').forEach(img => {
-  img.addEventListener('click', () => {
-    modal.style.display = 'block';
-    modalImg.src = img.src;
-    scale = 1;
-    modalImg.style.transform = `scale(${scale})`;
-    modal.scrollTop = 0;
+  // ---------------- Screenshots UX (scroll arrows + modal zoom) ----------------
+  document.querySelectorAll('.screenshots-wrapper').forEach(wrapper=>{
+    const container = wrapper.querySelector('.screenshots-container');
+    const left = wrapper.querySelector('.arrow-left');
+    const right = wrapper.querySelector('.arrow-right');
+    if(left) left.addEventListener('click', ()=> container.scrollBy({ left: -160, behavior: 'smooth' }));
+    if(right) right.addEventListener('click', ()=> container.scrollBy({ left: 160, behavior: 'smooth' }));
+    // click on image open modal
+    wrapper.querySelectorAll('img').forEach(img=>{
+      img.addEventListener('click', ()=>{
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        modal.style.display = 'block';
+        modalImg.src = img.src;
+        modalImg.style.transform = 'scale(1)';
+        window.currentScale = 1;
+      });
+    });
   });
-});
 
-document.getElementById('zoomIn').addEventListener('click', e => {
-  e.stopPropagation();
-  scale += 0.2;
-  modalImg.style.transform = `scale(${scale})`;
-});
+  document.getElementById('zoomIn').addEventListener('click', ()=>{
+    const modalImg = document.getElementById('modalImage');
+    window.currentScale = (window.currentScale || 1) + 0.2;
+    modalImg.style.transform = `scale(${window.currentScale})`;
+  });
+  document.getElementById('zoomOut').addEventListener('click', ()=>{
+    const modalImg = document.getElementById('modalImage');
+    window.currentScale = Math.max(0.5, (window.currentScale || 1) - 0.2);
+    modalImg.style.transform = `scale(${window.currentScale})`;
+  });
 
-document.getElementById('zoomOut').addEventListener('click', e => {
-  e.stopPropagation();
-  scale = Math.max(0.5, scale - 0.2);
-  modalImg.style.transform = `scale(${scale})`;
-});
+  // click outside to close modal
+  document.getElementById('imageModal').addEventListener('click', (e)=>{
+    if(e.target === e.currentTarget) e.currentTarget.style.display = 'none';
+  });
+  document.addEventListener('keydown', (e)=> { if(e.key === 'Escape') document.getElementById('imageModal').style.display = 'none'; });
 
-modal.addEventListener('click', e => { if(e.target === modal) modal.style.display = 'none'; });
-document.addEventListener('keydown', e => { if(e.key === 'Escape') modal.style.display = 'none'; });
+  // ---------------- Small: initialize UI ratings star highlighting on hover (visual only) ----------------
+  // Using MutationObserver to attach hover listeners when rating-stars appended
+  const mo = new MutationObserver(()=> {
+    document.querySelectorAll('.rating-stars').forEach(container=>{
+      container.querySelectorAll('.star').forEach((s, idx)=>{
+        s.onmouseenter = ()=> {
+          container.querySelectorAll('.star').forEach((ss,i)=> ss.classList.toggle('filled', i <= idx));
+        };
+        s.onmouseleave = ()=> { container.querySelectorAll('.star').forEach(ss=> ss.classList.remove('filled')); };
+      });
+    });
+  });
+  mo.observe(document.body, { childList: true, subtree: true });
 </script>
 
 </body>
