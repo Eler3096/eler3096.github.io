@@ -121,12 +121,13 @@ function guardarApp() {
   const tipo = document.getElementById("tipo").value.trim();
   const internet = document.getElementById("internet").value;
 
-  const sistema = document.getElementById("sistemaOperativo").value.trim();
+  // ❗ IDs corregidos
+  const sistema = document.getElementById("sistema").value.trim();
   const requisitos = document.getElementById("requisitos").value.trim();
   const fechaAct = document.getElementById("fechaAct").value;
   const edad = document.getElementById("edad").value.trim();
   const anuncios = document.getElementById("anuncios").value;
-  const privacidad = document.getElementById("privacidadUrl").value.trim();
+  const privacidad = document.getElementById("privacidad").value.trim();
 
   const capturas = document.getElementById("capturas").files;
 
@@ -210,7 +211,6 @@ function guardarApp() {
       tipo,
       internet,
 
-      // 🔥 NOMBRES corregidos para index.js
       sistemaOperativo: sistema,
       requisitos,
       fechaActualizacion: fechaAct,
@@ -226,7 +226,6 @@ function guardarApp() {
     if (apkData.url) data.apk = apkData.url;
     if (apkData.size) data.size = apkData.size;
 
-    // valores iniciales
     if (!editId) {
       data.ratingAvg = 0;
       data.ratingCount = 0;
@@ -277,5 +276,3 @@ function limpiarFormulario() {
   document.getElementById("imagen").value = "";
   document.getElementById("capturas").value = "";
 }
-
-
