@@ -666,4 +666,46 @@ body {
 }
 
 
+.info-app {
+  margin: 15px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.info-item {
+  background: rgba(255,255,255,0.03);
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(75,85,99,0.4);
+}
+
+.info-icon {
+  font-size: 1.3rem;
+  display: block;
+  margin-bottom: 4px;
+  color: #facc15; /* Amarillo Google Play */
+}
+
+.info-title {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-bottom: 3px;
+}
+
+.info-value {
+  font-size: 0.87rem;
+  font-weight: 500;
+  color: #e5e7eb;
+  word-break: break-word;
+}
+
+.info-value a {
+  color: #93c5fd;
+  text-decoration: underline;
+}
+
+.info-value a:hover {
+  color: #bfdbfe;
+}
 
