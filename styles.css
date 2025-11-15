@@ -540,39 +540,6 @@ body {
 }
 
 
-/* INFORMACIÓN DE LA APP */
-.info-app {
-  margin: 10px 0 16px;
-  font-size: 0.85rem;
-  color: #e5e7eb;
-}
-.info-app p {
-  margin-bottom: 4px;
-}
-.info-app a {
-  color: #93c5fd;
-  text-decoration: underline;
-}
-.info-app a:hover {
-  color: #bfdbfe;
-}
-
-/* BOTÓN COMPARTIR */
-.share-btn {
-  margin-bottom: 16px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(59,130,246,0.9);
-  background: rgba(15,23,42,0.9);
-  color: #bfdbfe;
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-.share-btn:hover {
-  background: rgba(59,130,246,0.5);
-  color: white;
-}
-
 /* Reseñas */
 .review-form {
   background: rgba(255,255,255,0.04);
@@ -665,46 +632,58 @@ body {
   align-items: center;
 }
 
+/* ===== INFORMACIÓN EN CUADRICULA (CORREGIDO) ===== */
 
-.info-app {
-  margin: 15px 0;
+.info-grid {
+  margin: 18px 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 14px;
 }
 
-.info-item {
-  background: rgba(255,255,255,0.03);
-  padding: 12px;
-  border-radius: 14px;
+/* Caja individual */
+.info-box {
+  background: rgba(255,255,255,0.04);
+  padding: 12px 14px;
+  border-radius: 12px;
   border: 1px solid rgba(75,85,99,0.4);
 }
 
-.info-icon {
-  font-size: 1.3rem;
-  display: block;
+/* Fila ícono + título */
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-bottom: 4px;
-  color: #facc15; /* Amarillo Google Play */
 }
 
+/* Icono */
+.info-icon {
+  width: 22px;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #facc15; /* Amarillo */
+}
+
+/* Título (Idioma, Versión, etc) */
 .info-title {
-  font-size: 0.75rem;
-  color: #94a3b8;
-  margin-bottom: 3px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #cbd5f5;
 }
 
+/* Valor */
 .info-value {
-  font-size: 0.87rem;
-  font-weight: 500;
+  font-size: 0.88rem;
   color: #e5e7eb;
-  word-break: break-word;
+  padding-left: 30px; /* Alineado debajo del texto */
+  margin-top: 4px;
 }
 
 .info-value a {
   color: #93c5fd;
   text-decoration: underline;
 }
-
 .info-value a:hover {
   color: #bfdbfe;
 }
