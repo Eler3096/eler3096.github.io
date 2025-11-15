@@ -64,45 +64,7 @@
     <div class="footer-right"><span>Hecho con ❤️ y Firebase</span></div>
   </footer>
 
-<!-- ===================== OVERLAY DETALLE (Play Store) ===================== -->
-<div id="detailOverlay" class="overlay hidden">
-  <div id="detailBackdrop" class="overlay-backdrop"></div>
-
-  <div class="overlay-panel">
-
-    <button id="detailClose" class="overlay-close">✕</button>
-
-    <div class="overlay-header">
-      <img id="detailIcon" class="overlay-icon" src="" alt="App">
-      <div>
-        <h1 id="detailName"></h1>
-        <p id="detailCategory"></p>
-        <p id="detailSize"></p>
-        <p id="detailInternet"></p>
-      </div>
-    </div>
-
-    <button id="installBtn" class="install-btn">Instalar</button>
-
-    <p id="detailStats" class="detail-stats"></p>
-
-    <div class="rating-block">
-      <p id="ratingLabel" class="rating-label"></p>
-      <div id="starsRow" class="stars-row"></div>
-      <button id="likeBtn" class="like-btn">❤️ Me gusta</button>
-    </div>
-
-    <h2>Descripción</h2>
-    <p id="detailDesc" class="detail-desc"></p>
-
-    <h2>Capturas de pantalla</h2>
-    <div id="detailScreens" class="screenshots-row"></div>
-
-  </div>
-</div>
-<!-- ======================================================================= -->
-
-  <!-- ===================== OVERLAY DETALLE (Play Store) ===================== -->
+  <!-- ========== OVERLAY DETALLE ÚNICO (CORREGIDO) ========== -->
   <div id="detailOverlay" class="overlay hidden">
     <div id="detailBackdrop" class="overlay-backdrop"></div>
 
@@ -126,9 +88,7 @@
 
       <div class="rating-block">
         <p id="ratingLabel" class="rating-label"></p>
-
         <div id="starsRow" class="stars-row"></div>
-
         <button id="likeBtn" class="like-btn">❤️ Me gusta</button>
       </div>
 
@@ -140,7 +100,7 @@
 
     </div>
   </div>
-  <!-- ======================================================================== -->
+  <!-- ======================================================= -->
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
