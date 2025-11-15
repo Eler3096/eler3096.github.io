@@ -1,149 +1,251 @@
-// index.js — lógica de la tienda pública
+// ====== Referencias DOM ======
+const appsGrid = document.getElementById("appsGrid");
+const emptyState = document.getElementById("emptyState");
+const searchInput = document.getElementById("searchInput");
+const chips = document.querySelectorAll(".chip");
+document.getElementById("year").textContent = new Date().getFullYear();
 
-const appsGrid = document.getElementById('appsGrid');
-const searchInput = document.getElementById('searchInput');
-const emptyState = document.getElementById('emptyState');
-const categoryChips = document.querySelectorAll('.chip');
+// Overlay detalle
+const overlay = document.getElementById("detailOverlay");
+const overlayBackdrop = document.getElementById("detailBackdrop");
+const detailIcon = document.getElementById("detailIcon");
+const detailName = document.getElementById("detailName");
+const detailCategory = document.getElementById("detailCategory");
+const detailSize = document.getElementById("detailSize");
+const detailInternet = document.getElementById("detailInternet");
+const detailStats = document.getElementById("detailStats");
+const detailDesc = document.getElementById("detailDesc");
+const detailScreens = document.getElementById("detailScreens");
+const installBtn = document.getElementById("installBtn");
+const likeBtn = document.getElementById("likeBtn");
+const starsRow = document.getElementById("starsRow");
+const ratingLabel = document.getElementById("ratingLabel");
 
-document.getElementById('year').textContent = new Date().getFullYear();
+let allApps = [];
+let currentCat = "all";
+let currentApp = null;
 
-let apps = [];        // todas las apps de Firestore
-let currentCat = 'all';
-let searchText = '';
+// ====== LocalStorage para votos anónimos ======
+const VOTES_KEY = "appsmart_votes";
 
-// Escuchar cambios en Firestore (colección "apps")
-db.collection('apps')
-  .orderBy('fecha', 'desc')
-  .onSnapshot(snapshot => {
-    apps = snapshot.docs.map(doc => doc.data());
-    renderApps();
-  }, err => {
-    console.error('Error obteniendo apps:', err);
-    emptyState.style.display = 'block';
-    emptyState.textContent = 'Error cargando apps. Intenta más tarde.';
-  });
+function getVotes() {
+  try {
+    return JSON.parse(localStorage.getItem(VOTES_KEY) || "{}");
+  } catch (e) {
+    return {};
+  }
+}
+function saveVotes(v) {
+  localStorage.setItem(VOTES_KEY, JSON.stringify(v));
+}
 
-// Renderizar la grilla de apps
+// ====== Cargar apps desde Firestore ======
+db.collection("apps").orderBy("fecha", "desc").onSnapshot(snap => {
+  allApps = snap.docs.map(d => d.data());
+  renderApps();
+}, err => {
+  console.error(err);
+  emptyState.style.display = "block";
+  emptyState.textContent = "Error cargando apps. Intenta más tarde.";
+});
+
+// ====== Render lista ======
 function renderApps() {
-  appsGrid.innerHTML = '';
+  const q = (searchInput.value || "").toLowerCase();
+  appsGrid.innerHTML = "";
 
-  const q = searchText.toLowerCase();
+  let list = allApps;
 
-  const filtered = apps.filter(app => {
-    if (!app) return false;
+  if (currentCat !== "all") {
+    list = list.filter(a => a.categoria === currentCat);
+  }
 
-    // filtro por categoría
-    if (currentCat !== 'all' && (app.categoria || '') !== currentCat) return false;
+  if (q) {
+    list = list.filter(a =>
+      (a.nombre || "").toLowerCase().includes(q) ||
+      (a.descripcion || "").toLowerCase().includes(q)
+    );
+  }
 
-    // filtro por texto
-    if (!q) return true;
-
-    const nombre = (app.nombre || '').toLowerCase();
-    const desc = (app.descripcion || '').toLowerCase();
-    return nombre.includes(q) || desc.includes(q);
-  });
-
-  if (!filtered.length) {
-    emptyState.style.display = 'block';
+  if (!list.length) {
+    emptyState.style.display = "block";
     return;
   }
-  emptyState.style.display = 'none';
+  emptyState.style.display = "none";
 
-  filtered.forEach(app => {
-    const card = document.createElement('article');
-    card.className = 'app-card';
+  const votes = getVotes();
 
-    const img = document.createElement('img');
-    img.className = 'app-thumb';
-    img.src = app.imagen || 'logo appsmart.png';
-    img.alt = app.nombre || 'App';
+  list.forEach(app => {
+    const card = document.createElement("article");
+    card.className = "play-card";
 
-    const body = document.createElement('div');
-    body.className = 'app-body';
+    const myVote = votes[app.id] || {};
+    const ratingAvg = app.ratingAvg || 0;
+    const ratingCount = app.ratingCount || 0;
+    const likes = app.likes || 0;
+    const descargas = app.descargas || 0;
+    const internet = app.internet === "offline"
+      ? "📴 Sin Internet"
+      : "🌐 Con Internet";
 
-    const titleRow = document.createElement('div');
-    titleRow.className = 'app-title-row';
+    const size = app.size || "—";
 
-    const title = document.createElement('h3');
-    title.className = 'app-title';
-    title.textContent = app.nombre || 'App sin nombre';
+    const starsText = ratingCount
+      ? `⭐ ${ratingAvg.toFixed(1)} (${ratingCount})`
+      : "⭐ Sin valoraciones";
 
-    const typeBadge = document.createElement('span');
-    typeBadge.className = 'badge';
-    typeBadge.textContent = app.tipo || 'Gratis';
+    card.innerHTML = `
+      <img class="play-icon" src="${app.imagen}" alt="${app.nombre}">
+      <div class="play-info">
+        <h3 class="play-name">${app.nombre}</h3>
+        <p class="play-line1">${internet}</p>
+        <p class="play-line2">
+          ${starsText} • ❤️ ${likes} • ${size} • ${descargas} descargas
+        </p>
+      </div>
+    `;
 
-    titleRow.appendChild(title);
-    titleRow.appendChild(typeBadge);
-
-    const meta = document.createElement('div');
-    meta.className = 'app-meta';
-    meta.textContent = `${app.categoria || 'Sin categoría'} • v${app.version || '1.0'} • ${app.idioma || 'ES'}`;
-
-    const desc = document.createElement('p');
-    desc.className = 'app-desc';
-    desc.textContent = app.descripcion || '';
-
-    const footer = document.createElement('div');
-    footer.className = 'card-footer';
-
-    const stats = document.createElement('div');
-    stats.className = 'stats';
-    const likesSpan = document.createElement('span');
-    likesSpan.innerHTML = `👍 <strong>${app.likes || 0}</strong>`;
-    const dlsSpan = document.createElement('span');
-    dlsSpan.innerHTML = `⬇️ <strong>${app.descargas || 0}</strong>`;
-    stats.appendChild(likesSpan);
-    stats.appendChild(dlsSpan);
-
-    const btnRow = document.createElement('div');
-    btnRow.className = 'btn-row';
-
-    if (app.apk) {
-      const btnApk = document.createElement('a');
-      btnApk.href = app.apk;
-      btnApk.target = '_blank';
-      btnApk.rel = 'noreferrer';
-      btnApk.className = 'btn-small btn-primary';
-      btnApk.textContent = 'Instalar APK';
-      btnRow.appendChild(btnApk);
-    }
-
-    if (app.playUrl) {
-      const btnPlay = document.createElement('a');
-      btnPlay.href = app.playUrl;
-      btnPlay.target = '_blank';
-      btnPlay.rel = 'noreferrer';
-      btnPlay.className = 'btn-small btn-ghost';
-      btnPlay.textContent = 'Google Play';
-      btnRow.appendChild(btnPlay);
-    }
-
-    footer.appendChild(stats);
-    footer.appendChild(btnRow);
-
-    body.appendChild(titleRow);
-    body.appendChild(meta);
-    body.appendChild(desc);
-    body.appendChild(footer);
-
-    card.appendChild(img);
-    card.appendChild(body);
+    card.addEventListener("click", () => openDetails(app));
 
     appsGrid.appendChild(card);
   });
 }
 
-// Eventos de búsqueda y categorías
-searchInput.addEventListener('input', (e) => {
-  searchText = e.target.value.trim();
-  renderApps();
-});
+// ====== Eventos de filtros & búsqueda ======
+searchInput.addEventListener("input", renderApps);
 
-categoryChips.forEach(chip => {
-  chip.addEventListener('click', () => {
-    categoryChips.forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    currentCat = chip.getAttribute('data-cat');
+chips.forEach(chip => {
+  chip.addEventListener("click", () => {
+    document.querySelector(".chip.active").classList.remove("active");
+    chip.classList.add("active");
+    currentCat = chip.dataset.cat;
     renderApps();
   });
 });
+
+// ====== Detalle tipo Play Store ======
+function openDetails(app) {
+  currentApp = app;
+  const votes = getVotes();
+  const myVote = votes[app.id] || {};
+
+  overlay.classList.remove("hidden");
+
+  detailIcon.src = app.imagen;
+  detailName.textContent = app.nombre;
+  detailCategory.textContent = app.categoria || "";
+  detailSize.textContent = app.size || "—";
+  detailInternet.textContent = app.internet === "offline"
+    ? "📴 Funciona sin Internet"
+    : "🌐 Requiere Internet";
+  detailDesc.textContent = app.descripcion || "";
+
+  const ratingAvg = app.ratingAvg || 0;
+  const ratingCount = app.ratingCount || 0;
+  ratingLabel.textContent = ratingCount
+    ? `Valoración: ${ratingAvg.toFixed(1)} (${ratingCount} votos)`
+    : "Sin valoraciones todavía";
+
+  detailStats.textContent =
+    `Descargas: ${app.descargas || 0} • Likes: ${app.likes || 0}`;
+
+  detailScreens.innerHTML = "";
+  (app.imgSecundarias || []).forEach(url => {
+    const img = document.createElement("img");
+    img.src = url;
+    detailScreens.appendChild(img);
+  });
+
+  installBtn.onclick = () => {
+    if (app.apk) {
+      db.collection("apps").doc(app.id).update({
+        descargas: firebase.firestore.FieldValue.increment(1)
+      }).catch(console.error);
+      window.open(app.apk, "_blank");
+    }
+  };
+
+  likeBtn.textContent = myVote.liked ? "❤️ Ya te gusta" : "❤️ Me gusta";
+  likeBtn.disabled = !!myVote.liked;
+  likeBtn.onclick = () => handleLike(app);
+
+  renderStars(app, myVote.stars || 0);
+}
+
+function closeDetails() {
+  overlay.classList.add("hidden");
+}
+
+overlayBackdrop.addEventListener("click", closeDetails);
+document.getElementById("detailClose").addEventListener("click", closeDetails);
+
+// ====== Likes (una vez por usuario) ======
+function handleLike(app) {
+  const votes = getVotes();
+  const myVote = votes[app.id] || {};
+
+  if (myVote.liked) {
+    alert("Ya votaste con 'Me gusta' esta app desde este navegador.");
+    return;
+  }
+
+  db.collection("apps").doc(app.id).update({
+    likes: firebase.firestore.FieldValue.increment(1)
+  }).then(() => {
+    myVote.liked = true;
+    votes[app.id] = myVote;
+    saveVotes(votes);
+
+    currentApp.likes = (currentApp.likes || 0) + 1;
+    detailStats.textContent =
+      `Descargas: ${currentApp.descargas || 0} • Likes: ${currentApp.likes}`;
+    likeBtn.textContent = "❤️ Ya te gusta";
+    likeBtn.disabled = true;
+
+    renderApps();
+  }).catch(console.error);
+}
+
+// ====== Estrellas (una vez por usuario) ======
+function renderStars(app, myStars) {
+  starsRow.innerHTML = "";
+  for (let i = 1; i <= 5; i++) {
+    const btn = document.createElement("button");
+    btn.className = "star-btn";
+    btn.textContent = i <= myStars ? "★" : "☆";
+    btn.disabled = myStars > 0;
+    btn.addEventListener("click", () => handleStarClick(app, i));
+    starsRow.appendChild(btn);
+  }
+}
+
+function handleStarClick(app, stars) {
+  const votes = getVotes();
+  const myVote = votes[app.id] || {};
+  if (myVote.stars) {
+    alert("Ya calificaste esta app desde este navegador.");
+    return;
+  }
+
+  const prevAvg = app.ratingAvg || 0;
+  const prevCount = app.ratingCount || 0;
+  const newCount = prevCount + 1;
+  const newAvg = (prevAvg * prevCount + stars) / newCount;
+
+  db.collection("apps").doc(app.id).update({
+    ratingAvg: newAvg,
+    ratingCount: newCount
+  }).then(() => {
+    myVote.stars = stars;
+    votes[app.id] = myVote;
+    saveVotes(votes);
+
+    currentApp.ratingAvg = newAvg;
+    currentApp.ratingCount = newCount;
+    ratingLabel.textContent =
+      `Valoración: ${newAvg.toFixed(1)} (${newCount} votos)`;
+
+    renderStars(app, stars);
+    renderApps();
+  }).catch(console.error);
+}
