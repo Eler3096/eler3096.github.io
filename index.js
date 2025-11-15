@@ -27,8 +27,6 @@ const sendReviewBtn = document.getElementById("sendReviewBtn");
 const reviewText = document.getElementById("reviewText");
 const reviewStarsContainer = document.getElementById("reviewStars");
 
-// (REMOVIDO) ratingStars
-
 // Info de la app
 const infoIdioma = document.getElementById("infoIdioma");
 const infoVersion = document.getElementById("infoVersion");
@@ -244,7 +242,7 @@ function openDetails(app) {
   likeBtn.disabled = !!myVote.liked;
   likeBtn.onclick = () => handleLike(app);
 
-  renderStars(app, myVote.stars || 0);
+  renderStars(app);
 
   renderReviewStars();
   reviewText.value = "";
@@ -291,64 +289,18 @@ function handleLike(app) {
     });
 }
 
-// ====== ⭐ ESTRELLAS (UNA SOLA FILA, ESTILO GOOGLE PLAY) ======
-function renderStars(app, myStars) {
+// ====== ⭐ ESTRELLAS (SOLO VISUAL, NO SE PUEDE VOTAR) ======
+function renderStars(app) {
   starsRow.innerHTML = "";
 
-  // ⬅ Usa floor para que 2.9 muestre 2 estrellas
-  const valueToShow =
-    myStars > 0 ? myStars : Math.floor(app.ratingAvg || 0);
+  const valueToShow = Math.round(app.ratingAvg || 0);
 
   for (let i = 1; i <= 5; i++) {
-    const btn = document.createElement("button");
-    btn.className = "star-btn";
-    btn.textContent = i <= valueToShow ? "★" : "☆";
-
-    if (myStars === 0) {
-      btn.onclick = () => handleStarClick(app, i);
-    } else {
-      btn.disabled = true;
-    }
-
-    starsRow.appendChild(btn);
+    const star = document.createElement("span");
+    star.className = "star-static";
+    star.textContent = i <= valueToShow ? "★" : "☆";
+    starsRow.appendChild(star);
   }
-}
-
-
-function handleStarClick(app, stars) {
-  const votes = getVotes();
-  const myVote = votes[app.id] || {};
-
-  if (myVote.stars) return;
-
-  const prevAvg = app.ratingAvg || 0;
-  const prevCount = app.ratingCount || 0;
-  const newCount = prevCount + 1;
-  const newAvg = (prevAvg * prevCount + stars) / newCount;
-
-  const breakdown = app.starsBreakdown || {1:0,2:0,3:0,4:0,5:0};
-  breakdown[stars]++;
-
-  db.collection("apps").doc(app.id).update({
-    ratingAvg: newAvg,
-    ratingCount: newCount,
-    starsBreakdown: breakdown
-  }).then(() => {
-    myVote.stars = stars;
-    votes[app.id] = myVote;
-    saveVotes(votes);
-
-    currentApp.ratingAvg = newAvg;
-    currentApp.ratingCount = newCount;
-    currentApp.starsBreakdown = breakdown;
-
-    ratingLabel.textContent =
-      `Valoración: ${newAvg.toFixed(1)} (${newCount} votos)`;
-
-    renderStars(app, stars);
-    renderApps();
-    openDetails(currentApp);
-  });
 }
 
 // ====== Reseñas ======
@@ -452,7 +404,7 @@ function handleSendReview() {
     ratingLabel.textContent =
       `Valoración: ${newAvg.toFixed(1)} (${newCount} votos)`;
 
-    renderStars(app, 0);
+    renderStars(app);
     loadReviews(app.id);
     renderApps();
     openDetails(currentApp);
@@ -460,4 +412,3 @@ function handleSendReview() {
     alert("¡Tu reseña fue publicada!");
   });
 }
-
