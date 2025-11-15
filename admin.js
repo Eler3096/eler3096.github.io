@@ -4,19 +4,13 @@
 auth.onAuthStateChanged(user => {
   if (!user) location.href = "admin-login.html";
 });
-
-function logout() {
-  auth.signOut();
-}
-
-
+function logout() { auth.signOut(); }
 
 // =======================
 // VARIABLES GLOBALES
 // =======================
 let editId = null; // null = nueva app | id = editar app
-
-
+let prevSize = null; // tamaño anterior de APK si no se sube uno nuevo
 
 // =======================
 // MOSTRAR / OCULTAR LISTA
@@ -26,15 +20,10 @@ function toggleApps() {
   const btn = document.getElementById("toggleBtn");
 
   box.classList.toggle("hidden");
-
-  if (box.classList.contains("hidden")) {
-    btn.textContent = "📦 Apps Subidas";
-  } else {
-    btn.textContent = "📦 Ocultar Apps";
-  }
+  btn.textContent = box.classList.contains("hidden")
+    ? "📦 Apps Subidas"
+    : "📦 Ocultar Apps";
 }
-
-
 
 // =======================
 // LISTADO DE APPS
@@ -63,8 +52,6 @@ db.collection("apps").orderBy("fecha", "desc").onSnapshot(snap => {
   });
 });
 
-
-
 // =======================
 // CARGAR APP PARA EDITAR
 // =======================
@@ -85,20 +72,17 @@ function cargarParaEditar(id) {
     document.getElementById("tipo").value = a.tipo;
     document.getElementById("internet").value = a.internet;
 
-    // Guardar tamaño actual, por si no se sube un APK nuevo
-    document.getElementById("version").dataset.prevSize = a.size || "";
+    // Guardamos tamaño previo si existe
+    prevSize = a.size || null;
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
 
-
-
 // =======================
 // ELIMINAR APP COMPLETA
 // =======================
 function eliminarApp(id) {
-
   if (!confirm("¿Eliminar esta aplicación? Esta acción no se puede deshacer.")) return;
 
   const ref = db.collection("apps").doc(id);
@@ -117,8 +101,6 @@ function eliminarApp(id) {
   .then(() => alert("Aplicación eliminada ✔"))
   .catch(err => alert("Error: " + err.message));
 }
-
-
 
 // =======================
 // GUARDAR (CREAR / EDITAR)
@@ -164,10 +146,34 @@ function guardarApp() {
     });
   }
 
+  // === Imagen
   let promesaImg = imgFile ? upload(storage.ref(`imagenes/${id}.jpg`), imgFile) : Promise.resolve(null);
-  let promesaApk = apkFile ? upload(storage.ref(`apks/${id}.apk`), apkFile) : Promise.resolve(null);
 
-  Promise.all([promesaImg, promesaApk]).then(([imgURL, apkURL]) => {
+  // === APK (nuevo o buscar tamaño existente)
+  let promesaApk;
+
+  if (apkFile) {
+    promesaApk = upload(storage.ref(`apks/${id}.apk`), apkFile).then(url => ({
+      url,
+      size: (apkFile.size / 1024 / 1024).toFixed(1) + " MB"
+    }));
+  } else {
+    // Buscar tamaño real del APK ya existente en Firebase Storage
+    const ref = storage.ref(`apks/${id}.apk`);
+    promesaApk = ref
+      .getMetadata()
+      .then(meta => ({
+        url: null,
+        size: (meta.size / 1024 / 1024).toFixed(1) + " MB"
+      }))
+      .catch(() => ({
+        url: null,
+        size: prevSize // último tamaño conocido
+      }));
+  }
+
+  // === Guardar todo
+  Promise.all([promesaImg, promesaApk]).then(([imgURL, apkData]) => {
 
     const data = {
       id,
@@ -181,32 +187,21 @@ function guardarApp() {
       fecha: Date.now()
     };
 
-    // Guardar imagen solo si se subió
     if (imgURL) data.imagen = imgURL;
-
-    // Guardar APK solo si se subió
-    if (apkURL) {
-      data.apk = apkURL;
-      data.size = (apkFile.size / 1024 / 1024).toFixed(1) + " MB";
-    } else if (editId !== null) {
-      // Mantener tamaño anterior al editar
-      const prevSize = document.getElementById("version").dataset.prevSize;
-      if (prevSize) data.size = prevSize;
-    }
+    if (apkData.url) data.apk = apkData.url;
+    if (apkData.size) data.size = apkData.size;
 
     return docRef.set(data, { merge: true });
   })
   .then(() => {
-
     estado.textContent = "Guardado ✔";
     btn.disabled = false;
 
-    // Volver a modo "Nueva App"
-    if (editId !== null) {
-      editId = null;
-      document.getElementById("formTitle").textContent = "➕ Nueva Aplicación";
-      document.getElementById("subirBtn").textContent = "SUBIR APP";
-    }
+    editId = null;
+    prevSize = null;
+
+    document.getElementById("formTitle").textContent = "➕ Nueva Aplicación";
+    document.getElementById("subirBtn").textContent = "SUBIR APP";
 
     limpiarFormulario();
   })
@@ -215,8 +210,6 @@ function guardarApp() {
     btn.disabled = false;
   });
 }
-
-
 
 // =======================
 // LIMPIAR FORMULARIO
