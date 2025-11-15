@@ -18,10 +18,8 @@
     <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
   </header>
 
-
   <!-- ============ BOTÓN PARA MOSTRAR / OCULTAR ============ -->
   <button id="toggleBtn" class="btn-toggle" onclick="toggleApps()">📦 Apps Subidas</button>
-
 
   <!-- ============ LISTADO OCULTO AL INICIO ============ -->
   <div id="appsContainer" class="hidden">
@@ -40,7 +38,6 @@
       <tbody id="appsList"></tbody>
     </table>
   </div>
-
 
   <!-- ============ FORMULARIO ============ -->
   <h3 class="panel-section-title" id="formTitle">➕ Nueva Aplicación</h3>
@@ -136,6 +133,24 @@
         <label>Política de privacidad (URL)</label>
         <input id="privacidad" type="text" placeholder="https://...">
       </div>
+
+      <!-- ======================= -->
+      <!--   NUEVOS CAMPOS URL     -->
+      <!-- ======================= -->
+
+      <div class="form-group">
+        <label>URL Imagen Principal (GitHub RAW u otra)</label>
+        <input id="imagenUrl" type="text" placeholder="https://...">
+      </div>
+
+      <div class="form-group">
+        <label>URLs de Capturas (separadas por coma)</label>
+        <input id="capturasUrl" type="text" placeholder="url1,url2,url3">
+      </div>
+
+      <!-- ======================= -->
+      <!--   SUBIR ARCHIVOS        -->
+      <!-- ======================= -->
 
       <div class="form-group">
         <label>Capturas secundarias (máx 6)</label>
