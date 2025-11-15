@@ -126,7 +126,7 @@ function guardarApp() {
   const fechaAct = document.getElementById("fechaAct").value;
   const edad = document.getElementById("edad").value.trim();
   const anuncios = document.getElementById("anuncios").value;
-  const privacidad = document.getElementById("privacidad").value.trim();
+  const privacidad = document.getElementById("privacidadUrl").value.trim();
 
   const capturas = document.getElementById("capturas").files;
 
@@ -277,4 +277,5 @@ function limpiarFormulario() {
   document.getElementById("imagen").value = "";
   document.getElementById("capturas").value = "";
 }
+
 
