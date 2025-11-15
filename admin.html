@@ -5,6 +5,7 @@
   <title>Panel Administrador</title>
   <link rel="stylesheet" href="admin.css">
 </head>
+
 <body>
 
 <div class="admin-container">
@@ -17,7 +18,26 @@
     <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
   </header>
 
-  <h3 class="panel-section-title">➕ Nueva Aplicación</h3>
+
+  <!-- =================== LISTADO DE APLICACIONES =================== -->
+  <h3 class="panel-section-title">📦 Aplicaciones Publicadas</h3>
+
+  <table class="apps-table">
+    <thead>
+      <tr>
+        <th>Icono</th>
+        <th>Nombre</th>
+        <th>Categoría</th>
+        <th>Versión</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="appsList"></tbody>
+  </table>
+
+
+  <!-- =================== FORMULARIO =================== -->
+  <h3 class="panel-section-title" id="formTitle">➕ Nueva Aplicación</h3>
 
   <div class="form-card">
 
@@ -69,25 +89,24 @@
       </div>
 
       <div class="form-group">
-  <label>Conexión</label>
-  <select id="internet">
-    <option value="offline">Funciona sin Internet</option>
-    <option value="online">Requiere Internet</option>
-  </select>
-</div>
+        <label>Conexión</label>
+        <select id="internet">
+          <option value="offline">Funciona sin Internet</option>
+          <option value="online">Requiere Internet</option>
+        </select>
+      </div>
 
-      
       <div class="form-group">
-        <label>APK</label>
+        <label>APK (solo si deseas cambiarla)</label>
         <input id="apk" type="file" accept=".apk">
       </div>
 
       <div class="form-group">
-        <label>Imagen</label>
+        <label>Imagen (solo si deseas cambiarla)</label>
         <input id="imagen" type="file" accept="image/*">
       </div>
 
-      <button id="subirBtn" class="btn-primary" onclick="subirApp(event)">SUBIR APP</button>
+      <button id="subirBtn" class="btn-primary" onclick="guardarApp()">GUARDAR</button>
 
       <p class="status-text" id="estado"></p>
 
@@ -97,7 +116,7 @@
 
 </div>
 
-<!-- ORDEN CORRECTO DE LOS SCRIPTS -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -108,4 +127,3 @@
 
 </body>
 </html>
-
