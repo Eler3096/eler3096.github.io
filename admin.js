@@ -13,13 +13,23 @@ function logout() { auth.signOut(); }
 // =======================
 let editId = null; // null = nueva app | id = editar app
 
+
 // =======================
 // MOSTRAR / OCULTAR LISTA
 // =======================
 function toggleApps() {
   const box = document.getElementById("appsContainer");
+  const btn = document.getElementById("toggleBtn");
+
   box.classList.toggle("hidden");
+
+  if (box.classList.contains("hidden")) {
+    btn.textContent = "📦 Mostrar Apps Subidas";
+  } else {
+    btn.textContent = "📦 Ocultar Apps Subidas";
+  }
 }
+
 
 // =======================
 // LISTADO DE APPS
@@ -68,6 +78,9 @@ function cargarParaEditar(id) {
     document.getElementById("idioma").value = a.idioma;
     document.getElementById("tipo").value = a.tipo;
     document.getElementById("internet").value = a.internet;
+
+    // al editar, mostrar el formulario arriba
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
 
@@ -84,13 +97,12 @@ function eliminarApp(id) {
   ref.get().then(doc => {
     if (!doc.exists) return alert("No existe la app.");
 
-    const a = doc.data();
-
     const imgRef = storage.ref(`imagenes/${id}.jpg`);
     const apkRef = storage.ref(`apks/${id}.apk`);
 
-    imgRef.delete().catch(() => { });
-    apkRef.delete().catch(() => { });
+    // eliminar archivos de Firebase Storage
+    imgRef.delete().catch(() => {});
+    apkRef.delete().catch(() => {});
 
     return ref.delete();
   })
@@ -180,10 +192,13 @@ function guardarApp() {
       document.getElementById("subirBtn").textContent = "SUBIR APP";
     }
 
+    // limpiar archivos seleccionados
+    document.getElementById("apk").value = "";
+    document.getElementById("imagen").value = "";
+
   })
   .catch(err => {
     estado.textContent = "Error: " + err.message;
     btn.disabled = false;
   });
 }
-
