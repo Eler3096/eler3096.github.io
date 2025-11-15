@@ -480,4 +480,17 @@ body {
   object-fit:cover;
   border-radius:14px;
 }
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.store-footer {
+  margin-top: auto;
+}
+
 
