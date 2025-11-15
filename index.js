@@ -27,6 +27,20 @@ const sendReviewBtn = document.getElementById("sendReviewBtn");
 const reviewText = document.getElementById("reviewText");
 const reviewStarsContainer = document.getElementById("reviewStars");
 
+// Info de la app (bloque extra)
+const infoIdioma = document.getElementById("infoIdioma");
+const infoVersion = document.getElementById("infoVersion");
+const infoTipo = document.getElementById("infoTipo");
+const infoSO = document.getElementById("infoSO");
+const infoReq = document.getElementById("infoReq");
+const infoFechaAct = document.getElementById("infoFechaAct");
+const infoEdad = document.getElementById("infoEdad");
+const infoAnuncios = document.getElementById("infoAnuncios");
+const infoPrivacidad = document.getElementById("infoPrivacidad");
+const infoTamañoApk = document.getElementById("infoTamañoApk");
+const infoDescargas = document.getElementById("infoDescargas");
+const shareBtn = document.getElementById("shareBtn");
+
 let allApps = [];
 let currentCat = "all";
 let currentApp = null;
@@ -52,7 +66,7 @@ db.collection("apps").orderBy("fecha", "desc").onSnapshot(
   snap => {
     allApps = snap.docs.map(d => {
       const data = d.data();
-      data.id = d.id; // por si no tienes el id dentro
+      data.id = d.id; // asegurar id
       return data;
     });
     renderApps();
@@ -110,8 +124,7 @@ function renderApps() {
     const ratingAvg = app.ratingAvg || 0;
     const ratingCount = app.ratingCount || 0;
     const likes = app.likes || 0;
-    const descargas = app.descargas || 0;
-
+    const descargas = app.descargasReales ?? app.descargas ?? 0;
     const size = app.size && app.size.length > 0 ? app.size : "—";
 
     const internet =
@@ -183,9 +196,10 @@ function openDetails(app) {
     ? `Valoración: ${ratingAvg.toFixed(1)} (${ratingCount} votos)`
     : "Sin valoraciones todavía";
 
-  detailStats.textContent = `Descargas: ${
-    app.descargas || 0
-  } • Likes: ${app.likes || 0}`;
+  const descReal = app.descargasReales ?? app.descargas ?? 0;
+  detailStats.textContent = `Descargas: ${descReal.toLocaleString("es-ES")} • Likes: ${(
+    app.likes || 0
+  ).toLocaleString("es-ES")}`;
 
   // ===== GRAFICO ESTRELLAS =====
   let breakdown = app.starsBreakdown || {1:0,2:0,3:0,4:0,5:0};
@@ -209,6 +223,61 @@ function openDetails(app) {
     if (el) el.style.width = percent + "%";
   }
   [5,4,3,2,1].forEach(setBar);
+
+  // ===== INFORMACIÓN DE LA APP =====
+  infoIdioma.textContent = app.idioma || "—";
+  infoVersion.textContent = app.version || "—";
+  infoTipo.textContent = app.tipo || "—";
+  infoSO.textContent = app.sistemaOperativo || "—";
+  infoReq.textContent = app.requisitos || "—";
+
+  const ts = app.fechaActualizacion || app.fecha;
+  if (ts) {
+    const d = new Date(ts);
+    infoFechaAct.textContent = d.toLocaleDateString("es-ES");
+  } else {
+    infoFechaAct.textContent = "—";
+  }
+
+  infoEdad.textContent = app.edad || "—";
+
+  let anunciosTexto = "—";
+  if (app.anuncios === "si") anunciosTexto = "Sí";
+  else if (app.anuncios === "no") anunciosTexto = "No";
+  infoAnuncios.textContent = anunciosTexto;
+
+  if (app.privacidadUrl) {
+    infoPrivacidad.href = app.privacidadUrl;
+    infoPrivacidad.textContent = "Ver";
+  } else {
+    infoPrivacidad.removeAttribute("href");
+    infoPrivacidad.textContent = "No disponible";
+  }
+
+  infoTamañoApk.textContent = app.size || "—";
+  infoDescargas.textContent = descReal.toLocaleString("es-ES");
+
+  if (shareBtn) {
+    shareBtn.onclick = () => {
+      const url = window.location.origin + window.location.pathname + "?app=" + encodeURIComponent(app.id || "");
+      const shareData = {
+        title: app.nombre,
+        text: app.descripcion || "",
+        url
+      };
+
+      if (navigator.share) {
+        navigator.share(shareData).catch(() => {});
+      } else if (navigator.clipboard) {
+        navigator.clipboard
+          .writeText(url)
+          .then(() => alert("Enlace copiado al portapapeles"))
+          .catch(() => alert("No se pudo copiar el enlace. URL: " + url));
+      } else {
+        alert("Comparte esta URL: " + url);
+      }
+    };
+  }
 
   // ===== CAPTURAS =====
   detailScreens.innerHTML = "";
@@ -291,9 +360,8 @@ function handleLike(app) {
 
       currentApp.likes = (currentApp.likes || 0) + 1;
 
-      detailStats.textContent = `Descargas: ${
-        currentApp.descargas || 0
-      } • Likes: ${currentApp.likes}`;
+      const descReal = currentApp.descargasReales ?? currentApp.descargas ?? 0;
+      detailStats.textContent = `Descargas: ${descReal.toLocaleString("es-ES")} • Likes: ${currentApp.likes.toLocaleString("es-ES")}`;
 
       likeBtn.textContent = "❤️ Ya te gusta";
       likeBtn.disabled = true;
