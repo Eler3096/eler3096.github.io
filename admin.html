@@ -19,21 +19,26 @@
   </header>
 
 
-  <!-- ============ LISTADO ============ -->
-  <h3 class="panel-section-title">📦 Aplicaciones Publicadas</h3>
+  <!-- ============ BOTÓN PARA VER/OCULTAR LAS APPS ============ -->
+  <button class="btn-toggle" onclick="toggleApps()">📦 Apps Subidas</button>
 
-  <table class="apps-table">
-    <thead>
-      <tr>
-        <th>Icono</th>
-        <th>Nombre</th>
-        <th>Categoría</th>
-        <th>Versión</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody id="appsList"></tbody>
-  </table>
+  <!-- ============ LISTADO OCULTO ============ -->
+  <div id="appsContainer" class="hidden">
+    <h3 class="panel-section-title">📦 Aplicaciones Publicadas</h3>
+
+    <table class="apps-table">
+      <thead>
+        <tr>
+          <th>Icono</th>
+          <th>Nombre</th>
+          <th>Categoría</th>
+          <th>Versión</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="appsList"></tbody>
+    </table>
+  </div>
 
 
   <!-- ============ FORMULARIO ============ -->
