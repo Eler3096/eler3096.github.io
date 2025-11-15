@@ -39,7 +39,6 @@ const infoAnuncios = document.getElementById("infoAnuncios");
 const infoPrivacidad = document.getElementById("infoPrivacidad");
 const infoTamañoApk = document.getElementById("infoTamañoApk");
 const infoDescargas = document.getElementById("infoDescargas");
-const shareBtn = document.getElementById("shareBtn");
 
 let allApps = [];
 let currentCat = "all";
@@ -61,54 +60,17 @@ function saveVotes(v) {
   localStorage.setItem(VOTES_KEY, JSON.stringify(v));
 }
 
-// ====== Helper: campo seguro ======
-function fixField(v, fallback = "—") {
-  if (v === null || v === undefined) return fallback;
-  const s = String(v).trim();
-  return s === "" ? fallback : s;
-}
-
-// ====== Helper: estrella más votada (modo Play Store) ======
-function getDominantStar(app) {
-  const breakdown = app.starsBreakdown || { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-  let bestStar = 0;
-  let bestCount = -1;
-
-  for (let star = 1; star <= 5; star++) {
-    const count = breakdown[star] || 0;
-    if (count > bestCount || (count === bestCount && star > bestStar)) {
-      bestCount = count;
-      bestStar = star;
-    }
+// ====== Cargar apps ======
+db.collection("apps").orderBy("fecha", "desc").onSnapshot(
+  snap => {
+    allApps = snap.docs.map(d => ({ ...d.data(), id: d.id }));
+    renderApps();
+  },
+  () => {
+    emptyState.style.display = "block";
+    emptyState.textContent = "Error cargando apps.";
   }
-
-  // Si nunca se votó ninguna estrella, caemos al promedio redondeado
-  if (bestCount <= 0) {
-    const avg = app.ratingAvg || 0;
-    return Math.round(avg);
-  }
-
-  return bestStar;
-}
-
-// ====== Cargar apps desde Firestore ======
-db.collection("apps")
-  .orderBy("fecha", "desc")
-  .onSnapshot(
-    snap => {
-      allApps = snap.docs.map(d => {
-        const data = d.data();
-        data.id = d.id;
-        return data;
-      });
-      renderApps();
-    },
-    err => {
-      console.error(err);
-      emptyState.style.display = "block";
-      emptyState.textContent = "Error cargando apps. Intenta más tarde.";
-    }
-  );
+);
 
 // ====== Render lista ======
 function renderApps() {
@@ -122,22 +84,13 @@ function renderApps() {
   }
 
   if (q) {
-    list = list.filter(
-      a =>
-        (a.nombre || "").toLowerCase().includes(q) ||
-        (a.descripcion || "").toLowerCase().includes(q)
+    list = list.filter(a =>
+      (a.nombre || "").toLowerCase().includes(q) ||
+      (a.descripcion || "").toLowerCase().includes(q)
     );
   }
 
-  // Orden: mejor valoración primero
-  list.sort((a, b) => {
-    const ra = a.ratingAvg || 0;
-    const rb = b.ratingAvg || 0;
-    if (rb !== ra) return rb - ra;
-    const ca = a.ratingCount || 0;
-    const cb = b.ratingCount || 0;
-    return cb - ca;
-  });
+  list.sort((a, b) => (b.ratingAvg || 0) - (a.ratingAvg || 0));
 
   if (!list.length) {
     emptyState.style.display = "block";
@@ -150,294 +103,101 @@ function renderApps() {
     const card = document.createElement("article");
     card.className = "play-card";
 
-    const ratingAvg = app.ratingAvg || 0;
-    const ratingCount = app.ratingCount || 0;
-    const likes = app.likes || 0;
-    const descargas = app.descargasReales ?? app.descargas ?? 0;
-    const size = app.size && app.size.length > 0 ? app.size : "—";
+    const avg = app.ratingAvg || 0;
+    const cnt = app.ratingCount || 0;
 
-    const internet =
-      app.internet === "offline" ? "📴 Sin Internet" : "🌐 Con Internet";
-
-    const starsText = ratingCount
-      ? `⭐ ${ratingAvg.toFixed(1)} (${ratingCount})`
+    const stars = cnt
+      ? `⭐ ${avg.toFixed(1)} (${cnt})`
       : "⭐ Sin valoraciones";
 
     card.innerHTML = `
-      <img class="play-icon" src="${app.imagen}" alt="${app.nombre}">
+      <img class="play-icon" src="${app.imagen}">
       <div class="play-info">
-        <h3 class="play-name">${app.nombre}</h3>
-        <p class="play-line1">${internet}</p>
-        <p class="play-line2">
-          ${starsText} • ❤️ ${likes} • ${size} • ${descargas} descargas
-        </p>
+        <h3>${app.nombre}</h3>
+        <p>${app.internet === "offline" ? "📴 Sin Internet" : "🌐 Con Internet"}</p>
+        <p>${stars} • ❤️ ${app.likes || 0}</p>
       </div>
     `;
 
-    card.addEventListener("click", () => openDetails(app));
-
+    card.onclick = () => openDetails(app);
     appsGrid.appendChild(card);
   });
 }
 
-// ====== Eventos ======
-searchInput.addEventListener("input", renderApps);
-
-chips.forEach(chip => {
-  chip.addEventListener("click", () => {
-    const active = document.querySelector(".chip.active");
-    if (active) active.classList.remove("active");
-    chip.classList.add("active");
-    currentCat = chip.dataset.cat;
-    renderApps();
-  });
-});
-
 // ====== Detalle ======
 function openDetails(app) {
   currentApp = app;
-
   overlay.classList.remove("hidden");
 
+  // datos principales
   detailIcon.src = app.imagen;
   detailName.textContent = app.nombre;
   detailCategory.textContent = app.categoria || "";
-
-  detailSize.textContent =
-    app.size && app.size.length > 0 ? `📦 Tamaño: ${app.size}` : "📦 Tamaño: —";
-
-  detailInternet.textContent =
-    app.internet === "offline"
-      ? "📴 Funciona sin Internet"
-      : "🌐 Requiere Internet";
-
   detailDesc.textContent = app.descripcion || "";
 
-  const ratingAvg = app.ratingAvg || 0;
-  const ratingCount = app.ratingCount || 0;
+  const avg = app.ratingAvg || 0;
+  const cnt = app.ratingCount || 0;
 
-  ratingLabel.textContent = ratingCount
-    ? `Valoración: ${ratingAvg.toFixed(1)} (${ratingCount} votos)`
-    : "Sin valoraciones todavía";
+  ratingLabel.textContent = cnt
+    ? `Valoración: ${avg.toFixed(1)} (${cnt} votos)`
+    : "Sin valoraciones";
 
-  const descReal = app.descargasReales ?? app.descargas ?? 0;
-  detailStats.textContent = `Descargas: ${descReal.toLocaleString(
-    "es-ES"
-  )} • Likes: ${(app.likes || 0).toLocaleString("es-ES")}`;
+  // GRAFICO CORREGIDO
+  let breakdown = app.starsBreakdown || {1:0,2:0,3:0,4:0,5:0};
+  const total = Object.values(breakdown).reduce((a,b)=>a+b,0);
 
-  // ===== GRAFICO DE ESTRELLAS =====
-  let breakdown = app.starsBreakdown || {
-    1: 0,
-    2: 0,
-    3: 0,
-    4: 0,
-    5: 0
-  };
-  let total = Object.values(breakdown).reduce((a, b) => a + b, 0);
-
-  // si no hay breakdown pero sí hay ratingCount, fallback: todo en 5
-  if (!total && ratingCount) {
-    breakdown = { 1: 0, 2: 0, 3: 0, 4: 0, 5: ratingCount };
-    total = ratingCount;
-  }
-
-  ratingBig.textContent = ratingAvg.toFixed(1);
+  ratingBig.textContent = avg.toFixed(1);
   ratingTotal.textContent = `${total} reseñas`;
 
-  [5, 4, 3, 2, 1].forEach(star => {
-    const value = breakdown[star] || 0;
-    const percent = total ? (value / total) * 100 : 0;
-    const el = document.getElementById(`bar${star}`);
-    if (el) el.style.width = percent + "%";
+  [5,4,3,2,1].forEach(st => {
+    const bar = document.getElementById("bar"+st);
+
+    let pct = total ? (breakdown[st] / total) * 100 : 0;
+
+    // 🔥 CORRECCIÓN IMPORTANTE:
+    // aunque una valoración no tenga votos, la barra debe quedar visible
+    bar.style.width = pct + "%";
+    bar.style.minWidth = "4px";
   });
 
-  // ===== INFORMACIÓN DE LA APP =====
-  infoIdioma.textContent = fixField(app.idioma);
-  infoVersion.textContent = fixField(app.version);
-  infoTipo.textContent = fixField(app.tipo);
-
-  // compatibilidad: sistemaOperativo o sistema
-  infoSO.textContent = fixField(app.sistemaOperativo || app.sistema);
-
-  infoReq.textContent = fixField(app.requisitos);
-  infoEdad.textContent = fixField(app.edad);
-
-  let anunciosTexto = "—";
-  if (app.anuncios === "si") anunciosTexto = "Sí";
-  if (app.anuncios === "no") anunciosTexto = "No";
-  infoAnuncios.textContent = anunciosTexto;
-
-  const ts = app.fechaActualizacion || app.fecha;
-  infoFechaAct.textContent = ts
-    ? new Date(ts).toLocaleDateString("es-ES")
-    : "—";
-
-  infoTamañoApk.textContent = fixField(app.size);
-  infoDescargas.textContent = descReal.toLocaleString("es-ES");
-
-  if (app.privacidadUrl && app.privacidadUrl.trim() !== "") {
-    infoPrivacidad.href = app.privacidadUrl;
-    infoPrivacidad.textContent = "Ver";
-  } else {
-    infoPrivacidad.removeAttribute("href");
-    infoPrivacidad.textContent = "No disponible";
-  }
-
-  // ===== COMPARTIR =====
-  if (shareBtn) {
-    shareBtn.onclick = () => {
-      const url =
-        window.location.origin +
-        window.location.pathname +
-        "?app=" +
-        encodeURIComponent(app.id || "");
-      const shareData = {
-        title: app.nombre,
-        text: app.descripcion || "",
-        url
-      };
-
-      if (navigator.share) {
-        navigator.share(shareData).catch(() => {});
-      } else if (navigator.clipboard) {
-        navigator.clipboard
-          .writeText(url)
-          .then(() => alert("Enlace copiado al portapapeles"))
-          .catch(() =>
-            alert("No se pudo copiar el enlace. URL: " + url)
-          );
-      } else {
-        alert("Comparte esta URL: " + url);
-      }
-    };
-  }
-
-  // ===== CAPTURAS =====
-  detailScreens.innerHTML = "";
-
-  if (Array.isArray(app.imgSecundarias) && app.imgSecundarias.length) {
-    app.imgSecundarias.forEach(url => {
-      const img = document.createElement("img");
-      img.src = url;
-      img.loading = "lazy";
-      detailScreens.appendChild(img);
-    });
-  }
-
-  // ===== INSTALAR =====
-  installBtn.onclick = () => {
-    if (app.apk) {
-      db.collection("apps")
-        .doc(app.id)
-        .update({
-          descargas: firebase.firestore.FieldValue.increment(1)
-        })
-        .catch(console.error);
-
-      window.open(app.apk, "_blank");
-    }
-  };
-
-  // ===== Likes =====
+  // estrellas rápidas
   const votes = getVotes();
-  const myVote = votes[app.id] || {};
+  const my = votes[app.id] || {};
+  renderStars(app, my.stars || 0);
 
-  likeBtn.textContent = myVote.liked ? "❤️ Ya te gusta" : "❤️ Me gusta";
-  likeBtn.disabled = !!myVote.liked;
-  likeBtn.onclick = () => handleLike(app);
-
-  // ===== Estrellas rápidas (fila superior) =====
-  renderStars(app, myVote.stars || 0);
-
-  // ===== Reseñas =====
+  // reseñas
   renderReviewStars();
-  reviewText.value = "";
-  reviewStarsSelected = 0;
   loadReviews(app.id);
-
-  sendReviewBtn.onclick = handleSendReview;
+  reviewText.value = "";
 }
 
-function closeDetails() {
-  overlay.classList.add("hidden");
-}
-
-overlayBackdrop.addEventListener("click", closeDetails);
-document.getElementById("detailClose").addEventListener("click", closeDetails);
-
-// ====== Likes ======
-function handleLike(app) {
-  const votes = getVotes();
-  const myVote = votes[app.id] || {};
-
-  if (myVote.liked) return;
-
-  db.collection("apps")
-    .doc(app.id)
-    .update({
-      likes: firebase.firestore.FieldValue.increment(1)
-    })
-    .then(() => {
-      myVote.liked = true;
-      votes[app.id] = myVote;
-      saveVotes(votes);
-
-      if (currentApp && currentApp.id === app.id) {
-        currentApp.likes = (currentApp.likes || 0) + 1;
-        likeBtn.textContent = "❤️ Ya te gusta";
-        likeBtn.disabled = true;
-      }
-
-      renderApps();
-    })
-    .catch(console.error);
-}
-
-// ====== Estrellas rápidas (bloque arriba del "Me gusta") ======
+// ====== Estrellas rápidas ======
 function renderStars(app, myStars) {
   starsRow.innerHTML = "";
-
-  // baseStars = si ya votó el usuario, se usa su voto,
-  // si no, se usa la estrella más votada (getDominantStar)
-  const baseStars = myStars || getDominantStar(app) || 0;
-  const alreadyVoted = myStars > 0;
-
   for (let i = 1; i <= 5; i++) {
     const btn = document.createElement("button");
     btn.className = "star-btn";
-    btn.textContent = i <= baseStars ? "★" : "☆";
-
-    // Si ya votó, las estrellas solo muestran el valor y NO dejan hacer click
-    btn.disabled = alreadyVoted;
-
-    if (!alreadyVoted) {
-      btn.addEventListener("click", () => handleStarClick(app, i));
-    }
-
+    btn.textContent = i <= myStars ? "★" : "☆";
+    btn.disabled = myStars > 0;
+    btn.onclick = () => handleStarClick(app, i);
     starsRow.appendChild(btn);
   }
 }
 
 function handleStarClick(app, stars) {
   const votes = getVotes();
-  const myVote = votes[app.id] || {};
+  const my = votes[app.id] || {};
 
-  if (myVote.stars) return;
+  if (my.stars) return;
 
-  const prevAvg = app.ratingAvg || 0;
-  const prevCount = app.ratingCount || 0;
+  const oldAvg = app.ratingAvg || 0;
+  const oldCount = app.ratingCount || 0;
 
-  const newCount = prevCount + 1;
-  const newAvg = (prevAvg * prevCount + stars) / newCount;
+  const newCount = oldCount + 1;
+  const newAvg = (oldAvg * oldCount + stars) / newCount;
 
-  const breakdown = app.starsBreakdown || {
-    1: 0,
-    2: 0,
-    3: 0,
-    4: 0,
-    5: 0
-  };
-  breakdown[stars] = (breakdown[stars] || 0) + 1;
+  const breakdown = app.starsBreakdown || {1:0,2:0,3:0,4:0,5:0};
+  breakdown[stars]++;
 
   db.collection("apps")
     .doc(app.id)
@@ -447,39 +207,34 @@ function handleStarClick(app, stars) {
       starsBreakdown: breakdown
     })
     .then(() => {
-      myVote.stars = stars;
-      votes[app.id] = myVote;
+      my.stars = stars;
+      votes[app.id] = my;
       saveVotes(votes);
 
-      // Actualizamos currentApp en memoria
-      if (currentApp && currentApp.id === app.id) {
-        currentApp.ratingAvg = newAvg;
-        currentApp.ratingCount = newCount;
-        currentApp.starsBreakdown = breakdown;
-      }
+      currentApp.ratingAvg = newAvg;
+      currentApp.ratingCount = newCount;
+      currentApp.starsBreakdown = breakdown;
 
-      renderApps();
       openDetails(currentApp);
-    })
-    .catch(console.error);
+      renderApps();
+    });
 }
 
 // ====== Reseñas ======
 function renderReviewStars() {
   reviewStarsContainer.innerHTML = "";
   for (let i = 1; i <= 5; i++) {
-    const btn = document.createElement("button");
-    btn.textContent = "☆";
-    btn.className = "star-btn";
-    btn.onclick = () => setReviewStars(i);
-    reviewStarsContainer.appendChild(btn);
+    const b = document.createElement("button");
+    b.className = "star-btn";
+    b.textContent = "☆";
+    b.onclick = () => setReviewStars(i);
+    reviewStarsContainer.appendChild(b);
   }
 }
 
 function setReviewStars(n) {
   reviewStarsSelected = n;
-  const btns = reviewStarsContainer.querySelectorAll(".star-btn");
-  btns.forEach((b, i) => {
+  reviewStarsContainer.querySelectorAll("button").forEach((b,i)=>{
     b.textContent = i < n ? "★" : "☆";
   });
 }
@@ -490,107 +245,78 @@ function loadReviews(appId) {
   db.collection("apps")
     .doc(appId)
     .collection("reviews")
-    .orderBy("timestamp", "desc")
+    .orderBy("timestamp","desc")
     .get()
-    .then(snap => {
+    .then(snap=>{
       reviewsList.innerHTML = "";
 
       if (snap.empty) {
-        reviewsList.innerHTML =
-          "<p>No hay reseñas todavía. Sé el primero en comentar.</p>";
+        reviewsList.innerHTML = "<p>No hay reseñas aún.</p>";
         return;
       }
 
-      snap.forEach(doc => {
+      snap.forEach(doc=>{
         const r = doc.data();
-
         const item = document.createElement("div");
         item.className = "review-item";
 
-        const starsStr = "★".repeat(r.stars) + "☆".repeat(5 - r.stars);
+        const stars = "★".repeat(r.stars) + "☆".repeat(5-r.stars);
 
         item.innerHTML = `
-          <div class="review-stars">${starsStr}</div>
+          <div class="review-stars">${stars}</div>
           <div class="review-text">${r.comment}</div>
-          <div class="review-time">${new Date(
-            r.timestamp
-          ).toLocaleDateString()}</div>
+          <div class="review-time">${new Date(r.timestamp).toLocaleDateString()}</div>
         `;
 
         reviewsList.appendChild(item);
       });
-    })
-    .catch(err => {
-      console.error(err);
-      reviewsList.innerHTML = "<p>Error cargando reseñas.</p>";
     });
 }
 
-function handleSendReview() {
+sendReviewBtn.onclick = function() {
   if (!currentApp) return;
 
-  const text = reviewText.value.trim();
-
-  if (reviewStarsSelected === 0) {
-    alert("Selecciona una puntuación.");
-    return;
-  }
-
-  if (text.length < 5) {
-    alert("Escribe un comentario un poco más largo.");
-    return;
-  }
+  const tx = reviewText.value.trim();
+  if (tx.length < 3) return alert("Escribe un comentario más largo.");
+  if (!reviewStarsSelected) return alert("Selecciona estrellas.");
 
   const app = currentApp;
-  const prevAvg = app.ratingAvg || 0;
-  const prevCount = app.ratingCount || 0;
-  const newCount = prevCount + 1;
-  const newAvg = (prevAvg * prevCount + reviewStarsSelected) / newCount;
+  const oldAvg = app.ratingAvg || 0;
+  const oldCnt = app.ratingCount || 0;
 
-  const breakdown = app.starsBreakdown || {
-    1: 0,
-    2: 0,
-    3: 0,
-    4: 0,
-    5: 0
-  };
-  breakdown[reviewStarsSelected] =
-    (breakdown[reviewStarsSelected] || 0) + 1;
+  const newCnt = oldCnt + 1;
+  const newAvg = (oldAvg * oldCnt + reviewStarsSelected) / newCnt;
 
-  const appRef = db.collection("apps").doc(app.id);
-  const reviewRef = appRef.collection("reviews").doc();
+  const breakdown = app.starsBreakdown || {1:0,2:0,3:0,4:0,5:0};
+  breakdown[reviewStarsSelected]++;
+
+  const ref = db.collection("apps").doc(app.id);
+  const rev = ref.collection("reviews").doc();
 
   const batch = db.batch();
-  batch.set(reviewRef, {
+  batch.set(rev, {
     stars: reviewStarsSelected,
-    comment: text,
+    comment: tx,
     timestamp: Date.now()
   });
-  batch.update(appRef, {
+  batch.update(ref, {
     ratingAvg: newAvg,
-    ratingCount: newCount,
+    ratingCount: newCnt,
     starsBreakdown: breakdown
   });
 
-  batch
-    .commit()
-    .then(() => {
-      reviewText.value = "";
-      reviewStarsSelected = 0;
-      renderReviewStars();
+  batch.commit().then(()=>{
+    reviewText.value = "";
+    reviewStarsSelected = 0;
+    renderReviewStars();
 
-      currentApp.ratingAvg = newAvg;
-      currentApp.ratingCount = newCount;
-      currentApp.starsBreakdown = breakdown;
+    currentApp.ratingAvg = newAvg;
+    currentApp.ratingCount = newCnt;
+    currentApp.starsBreakdown = breakdown;
 
-      loadReviews(currentApp.id);
-      renderApps();
-      openDetails(currentApp);
+    loadReviews(app.id);
+    renderApps();
+    openDetails(app);
+  });
+};
 
-      alert("¡Tu reseña fue publicada!");
-    })
-    .catch(err => {
-      console.error(err);
-      alert("Error al publicar la reseña.");
-    });
-}
