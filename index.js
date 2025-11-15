@@ -90,7 +90,10 @@ function renderApps() {
     const ratingCount = app.ratingCount || 0;
     const likes = app.likes || 0;
     const descargas = app.descargas || 0;
-    const size = app.size || "—";
+
+    // 🔥 CORREGIDO: tamaño siempre existe
+    const size = app.size && app.size.length > 0 ? app.size : "—";
+
     const internet =
       app.internet === "offline" ? "📴 Sin Internet" : "🌐 Con Internet";
 
@@ -140,10 +143,11 @@ function openDetails(app) {
   detailName.textContent = app.nombre;
   detailCategory.textContent = app.categoria || "";
 
-  // 🔥 CORREGIDO: TAMAÑO CON FORMATO
-  detailSize.textContent = app.size
-    ? `📦 Tamaño: ${app.size}`
-    : "📦 Tamaño: No disponible";
+  // 🔥 TAMAÑO SIEMPRE MOSTRADO
+  detailSize.textContent =
+    app.size && app.size.length > 0
+      ? `📦 Tamaño: ${app.size}`
+      : "📦 Tamaño: —";
 
   detailInternet.textContent =
     app.internet === "offline"
@@ -163,7 +167,6 @@ function openDetails(app) {
     app.descargas || 0
   } • Likes: ${app.likes || 0}`;
 
-  // Screenshots
   detailScreens.innerHTML = "";
   (app.imgSecundarias || []).forEach(url => {
     const img = document.createElement("img");
@@ -171,7 +174,6 @@ function openDetails(app) {
     detailScreens.appendChild(img);
   });
 
-  // Descargar APK
   installBtn.onclick = () => {
     if (app.apk) {
       db.collection("apps")
@@ -185,7 +187,6 @@ function openDetails(app) {
     }
   };
 
-  // Likes
   likeBtn.textContent = myVote.liked ? "❤️ Ya te gusta" : "❤️ Me gusta";
   likeBtn.disabled = !!myVote.liked;
 
@@ -201,15 +202,12 @@ function closeDetails() {
 overlayBackdrop.addEventListener("click", closeDetails);
 document.getElementById("detailClose").addEventListener("click", closeDetails);
 
-// ====== Likes (una vez por usuario) ======
+// ====== Likes ======
 function handleLike(app) {
   const votes = getVotes();
   const myVote = votes[app.id] || {};
 
-  if (myVote.liked) {
-    alert("Ya votaste con 'Me gusta' esta app desde este navegador.");
-    return;
-  }
+  if (myVote.liked) return;
 
   db.collection("apps")
     .doc(app.id)
@@ -235,7 +233,7 @@ function handleLike(app) {
     .catch(console.error);
 }
 
-// ====== Estrellas (una vez por usuario) ======
+// ====== Estrellas ======
 function renderStars(app, myStars) {
   starsRow.innerHTML = "";
   for (let i = 1; i <= 5; i++) {
@@ -254,10 +252,7 @@ function handleStarClick(app, stars) {
   const votes = getVotes();
   const myVote = votes[app.id] || {};
 
-  if (myVote.stars) {
-    alert("Ya calificaste esta app desde este navegador.");
-    return;
-  }
+  if (myVote.stars) return;
 
   const prevAvg = app.ratingAvg || 0;
   const prevCount = app.ratingCount || 0;
